@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 
 export const H2: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mt-10 mb-4 leading-tight">
@@ -53,3 +54,29 @@ export const WidgetContainer: React.FC<{ children: React.ReactNode; label?: stri
     </div>
   </div>
 );
+
+interface SpoilerProps {
+  children: React.ReactNode;
+  label?: string;
+}
+
+export const Spoiler: React.FC<SpoilerProps> = ({ children, label = "Reveal answer" }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="my-4 border border-gray-700 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center gap-2 px-4 py-3 bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-gray-200 transition-colors text-sm font-medium text-left"
+      >
+        {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        {label}
+      </button>
+      {isOpen && (
+        <div className="px-4 py-3 bg-gray-900/50 border-t border-gray-700 text-gray-300">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
