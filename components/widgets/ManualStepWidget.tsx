@@ -153,24 +153,32 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
 
       {/* Main interaction area */}
       <div className="p-4">
-        {/* History trail */}
-        {history.length > 1 && (
-          <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3 font-mono">
-            {history.slice(0, -1).map((n, i) => (
-              <React.Fragment key={i}>
-                <span>{n}</span>
+        {/* History chain - prominent display */}
+        <div className="flex items-center justify-center flex-wrap gap-2 mb-6 py-3 bg-gray-800/50 rounded-lg font-mono text-2xl">
+          {history.map((n, i) => (
+            <React.Fragment key={i}>
+              <span className={i === history.length - 1 ? 'text-blue-400 font-bold' : 'text-gray-400'}>
+                {n}
+              </span>
+              {i < history.length - 1 && (
                 <span className="text-gray-600">→</span>
-              </React.Fragment>
-            ))}
-          </div>
-        )}
+              )}
+            </React.Fragment>
+          ))}
+          {phase.type === 'step_complete' && (
+            <>
+              <span className="text-gray-600">→</span>
+              <span className="text-green-400 font-bold">{phase.result}</span>
+            </>
+          )}
+        </div>
 
         <div className="text-center mb-4">
           <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-1">
             Current Number
           </div>
           <div className="text-4xl font-mono font-bold text-blue-400">
-            {currentN}
+            {phase.type === 'step_complete' ? phase.result : currentN}
           </div>
         </div>
 
@@ -285,10 +293,10 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {phase.type === 'step_complete' && (
           <div className="text-center">
             <p className="text-green-400 font-bold mb-2">
-              Correct! The new number is {phase.result}.
+              Correct!
             </p>
             <p className="text-gray-400 text-sm mb-4">
-              Now we start over from fraction 1 with our new number.
+              Now we start over from fraction 1.
             </p>
             <button
               onClick={handleContinue}
