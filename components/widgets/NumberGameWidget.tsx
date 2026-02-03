@@ -175,23 +175,23 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
           )}
         </div>
 
-        {/* Sequence trail */}
-        <div ref={scrollRef} className="flex items-center space-x-2 overflow-x-auto pt-5 pb-2 mb-4 custom-scrollbar">
+        {/* Sequence trail - prominent display */}
+        <div ref={scrollRef} className="flex items-center justify-center flex-wrap gap-x-2 gap-y-1 overflow-x-auto py-3 px-4 mb-4 bg-gray-800/50 rounded-lg">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
               {i > 0 && s.ruleApplied !== null && (
-                <span className="relative flex-shrink-0 mx-1">
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8px] text-gray-500 font-mono leading-none whitespace-nowrap">
+                <span className="flex flex-col items-center flex-shrink-0">
+                  <span className="text-[10px] text-gray-500 font-mono leading-none whitespace-nowrap">
                     ×{fractions[s.ruleApplied].numerator}/{fractions[s.ruleApplied].denominator}
                   </span>
-                  <span className="text-gray-500 text-sm">→</span>
+                  <span className="text-gray-600 text-xl">→</span>
                 </span>
               )}
               <span
-                className={`font-mono text-sm flex-shrink-0 px-1.5 py-0.5 rounded ${
+                className={`font-mono text-xl flex-shrink-0 px-2 py-1 rounded ${
                   i === steps.length - 1
                     ? 'bg-blue-900/40 text-blue-300 font-bold'
-                    : 'text-gray-500'
+                    : 'text-gray-400'
                 }`}
               >
                 {showPrimeFactors ? formatPrimeFactors(s.registers) : s.n}
