@@ -52,9 +52,21 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         // Rule doesn't apply - show confirmation with the decimal result
         const f = fractions[phase.ruleIndex];
         const rawResult = (currentN * f.numerator) / f.denominator;
-        const decimalResult = Number.isInteger(rawResult)
-          ? rawResult.toString()
-          : rawResult.toFixed(2).replace(/\.?0+$/, '');
+        let decimalResult: string;
+        if (Number.isInteger(rawResult)) {
+          decimalResult = rawResult.toString();
+        } else {
+          // Check if it's a clean terminating decimal (up to 4 places)
+          const fixed4 = rawResult.toFixed(4);
+          const trimmed = fixed4.replace(/0+$/, '').replace(/\.$/, '');
+          if (parseFloat(trimmed) === rawResult) {
+            // Terminates cleanly
+            decimalResult = trimmed;
+          } else {
+            // Non-terminating, show truncated with ...
+            decimalResult = rawResult.toFixed(2).replace(/0+$/, '').replace(/\.$/, '') + '...';
+          }
+        }
         setPhase({ type: 'correct_no', ruleIndex: phase.ruleIndex, decimalResult });
       }
     } else {
