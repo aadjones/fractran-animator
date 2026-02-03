@@ -1,70 +1,72 @@
-import React from 'react';
-import { P, H2, H3, Callout, Spacer, WidgetContainer } from '../components/Prose';
-import NumberGameWidget from '../components/widgets/NumberGameWidget';
+import React from "react";
+import {
+  P,
+  H3,
+  Callout,
+  Spacer,
+  WidgetContainer,
+} from "../components/Prose";
+import NumberGameWidget from "../components/widgets/NumberGameWidget";
 
 const Chapter2NumberGame: React.FC = () => {
   return (
     <>
       <P>
-        {/* PLACEHOLDER: Write your narrative here. */}
-        Let's try the simplest possible program: just one fraction, <strong>3/2</strong>.
+        Let's explore some simple cases. What happens with just <em>one</em> fraction?
       </P>
 
-      <P>
-        Start with <strong>10</strong>. Multiply by 3/2. Is the result a whole number?
-        10 &times; 3/2 = 15. Yes! So 15 is your new number. Keep going.
-      </P>
-
-      <WidgetContainer label="Try it">
-        <NumberGameWidget
-          program={["3/2"]}
-          initialN={10}
-        />
-      </WidgetContainer>
+      <H3>One fraction: 1/10</H3>
 
       <P>
-        Notice how some numbers keep going and others stop quickly. What determines
-        whether the game continues?
-      </P>
-
-      <H3>Try different starting numbers</H3>
-
-      <P>
-        Change the starting number below. Try 12, 7, 108, 64. What patterns do you notice?
+        Try different starting numbers. What do you notice?
       </P>
 
       <WidgetContainer label="Experiment">
         <NumberGameWidget
-          program={["3/2"]}
-          initialN={12}
+          program={["1/10"]}
+          initialN={1000}
           editableStart={true}
         />
       </WidgetContainer>
 
       <Spacer />
 
-      <H3>A bigger program</H3>
+      <H3>One fraction: 1/15</H3>
 
       <P>
-        Now let's try two fractions: <strong>5/2</strong> and <strong>5/3</strong>.
-        Start with 72 (which happens to be 2&sup3; &times; 3&sup2;, but don't worry about that yet).
+        Now try this one. When does it work? When does it stop?
       </P>
 
-      <WidgetContainer label="Two fractions">
+      <WidgetContainer label="Experiment">
         <NumberGameWidget
-          program={["5/2", "5/3"]}
-          initialN={72}
+          program={["1/15"]}
+          initialN={3375}
+          editableStart={true}
         />
       </WidgetContainer>
 
       <P>
-        The game always tries fractions in order, left to right. It uses the
-        first one that works. When none of them give a whole number, the game stops.
+        Try starting with 45. Then 100. Then 225. Can you predict how many steps
+        it will take before you run it?
       </P>
 
+      <Spacer />
+
+      <H3>One fraction: 2/1</H3>
+
+      <P>
+        What about this one?
+      </P>
+
+      <WidgetContainer label="Try it">
+        <NumberGameWidget
+          program={["2/1"]}
+          initialN={1}
+        />
+      </WidgetContainer>
+
       <Callout>
-        There's a hidden structure in these numbers that explains everything.
-        What if we could see inside them?
+        Some games halt. Some games run forever.
       </Callout>
 
       <Spacer />

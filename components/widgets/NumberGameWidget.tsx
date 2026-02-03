@@ -8,6 +8,27 @@ interface NumberGameWidgetProps {
   initialN: number;
   editableStart?: boolean;
   maxSteps?: number;
+  showPrimeFactors?: boolean;
+}
+
+// Format PrimeMap as "2³ × 3²"
+function formatPrimeFactors(regs: PrimeMap): string {
+  const primes = Object.keys(regs).map(Number).sort((a, b) => a - b);
+  if (primes.length === 0) return '1';
+
+  const superscripts: Record<string, string> = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+  };
+
+  const toSuperscript = (n: number): string => {
+    if (n === 1) return '';
+    return String(n).split('').map(d => superscripts[d]).join('');
+  };
+
+  return primes
+    .map(p => `${p}${toSuperscript(regs[p])}`)
+    .join(' × ');
 }
 
 interface NumberStep {
@@ -39,6 +60,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   initialN,
   editableStart = false,
   maxSteps = 200,
+  showPrimeFactors = false,
 }) => {
   const fractions = React.useMemo(() => parseProgram(program), [program]);
 
@@ -112,22 +134,22 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
       {/* Fractions display */}
-      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-        <div className="flex items-center space-x-1 text-xs text-gray-500 uppercase tracking-wider font-bold">
-          <span>Program:</span>
+      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
+        <div className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">
+          Fractions:
         </div>
-        <div className="flex items-center space-x-3 font-mono">
+        <div className="flex flex-col space-y-1 font-mono text-sm">
           {fractions.map((f, i) => (
             <div
               key={i}
-              className={`flex flex-col items-center text-sm leading-none ${
+              className={`flex items-center ${
                 steps.length > 1 && steps[steps.length - 1].ruleApplied === i
                   ? 'text-blue-400'
                   : 'text-gray-400'
               }`}
             >
-              <span className="border-b border-gray-600 px-1">{f.numerator}</span>
-              <span className="px-1">{f.denominator}</span>
+              <span className="text-gray-600 w-5">{i + 1}.</span>
+              <span>{f.numerator}/{f.denominator}</span>
             </div>
           ))}
         </div>
@@ -141,6 +163,11 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
           <div className="text-4xl md:text-5xl font-mono font-bold text-blue-400">
             {steps[steps.length - 1].n}
           </div>
+          {showPrimeFactors && (
+            <div className="text-lg font-mono text-gray-400 mt-1">
+              {formatPrimeFactors(steps[steps.length - 1].registers)}
+            </div>
+          )}
           {halted && (
             <div className="text-red-400 text-xs font-bold uppercase tracking-wider mt-2">
               No fraction applies — stopped!
@@ -149,14 +176,15 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
         </div>
 
         {/* Sequence trail */}
-        <div ref={scrollRef} className="flex items-center space-x-2 overflow-x-auto pb-2 mb-4 custom-scrollbar">
+        <div ref={scrollRef} className="flex items-center space-x-2 overflow-x-auto pt-5 pb-2 mb-4 custom-scrollbar">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
-              {i > 0 && (
-                <span className="text-gray-600 text-xs flex-shrink-0">
-                  {s.ruleApplied !== null ? (
-                    <span className="text-gray-500">&times;</span>
-                  ) : ''}
+              {i > 0 && s.ruleApplied !== null && (
+                <span className="relative flex-shrink-0 mx-1">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8px] text-gray-500 font-mono leading-none whitespace-nowrap">
+                    ×{fractions[s.ruleApplied].numerator}/{fractions[s.ruleApplied].denominator}
+                  </span>
+                  <span className="text-gray-500 text-sm">→</span>
                 </span>
               )}
               <span
@@ -166,7 +194,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
                     : 'text-gray-500'
                 }`}
               >
-                {s.n}
+                {showPrimeFactors ? formatPrimeFactors(s.registers) : s.n}
               </span>
             </React.Fragment>
           ))}
