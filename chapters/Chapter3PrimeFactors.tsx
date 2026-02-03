@@ -24,21 +24,22 @@ const Chapter3PrimeFactors: React.FC = () => {
       <H3>A different way to write numbers</H3>
 
       <P>
-        Instead of writing "45", you can write it as a product of prime numbers:
+        Instead of writing "675", you can write it as a product of prime numbers:
       </P>
 
-      <Callout>45 = 3 × 3 × 5 = 3² × 5</Callout>
+      <Callout>675 = 3 × 3 × 3 × 5 × 5 = 3³ × 5²</Callout>
 
       <P>
-        Now you can see at a glance: 45 has a 3 and a 5, so it's divisible by 15.
+        Now you can see: 675 has 3s and 5s, so it must be divisible by 15.
+        In fact, it has two complete pairs of (3 × 5) — so it's divisible by 15 twice!
       </P>
 
-      <P>What about 225?</P>
+      <P>What about 3375?</P>
 
-      <Callout>225 = 3 × 3 × 5 × 5 = 3² × 5²</Callout>
+      <Callout>3375 = 3³ × 5³</Callout>
 
       <P>
-        Two 3s and two 5s. Divisible by 15 twice — which is why 1/15 took two steps!
+        Three 3s and three 5s. Divisible by 15 three times — which is why 1/15 takes three steps!
       </P>
 
       <Spacer />
@@ -50,10 +51,10 @@ const Chapter3PrimeFactors: React.FC = () => {
         Watch what happens to the 3s and 5s as you step through.
       </P>
 
-      <WidgetContainer label="225 with 1/15">
+      <WidgetContainer label="3375 with 1/15">
         <NumberGameWidget
           program={["1/15"]}
-          initialN={225}
+          initialN={3375}
           showPrimeFactors={true}
           editableStart={true}
         />
