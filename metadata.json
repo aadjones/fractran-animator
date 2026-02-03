@@ -1,0 +1,5 @@
+{
+  "name": "FRACTRAN Animator",
+  "description": "An interactive, animated emulator for the FRACTRAN esoteric programming language, visualizing state as prime registers.",
+  "requestFramePermissions": []
+}
