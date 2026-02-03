@@ -12,7 +12,7 @@ const Chapter3PrimeFactors: React.FC = () => {
 
       <P>
         Wouldn't it be nice if you could look at a number and immediately see
-        whether it is divisible by 15? How would you do that?
+        whether it's divisible by 15?
       </P>
 
       <Spoiler label="One idea">
@@ -24,20 +24,21 @@ const Chapter3PrimeFactors: React.FC = () => {
       <H3>A different way to write numbers</H3>
 
       <P>
-        Instead of writing "72", you can write it as a product of prime numbers:
+        Instead of writing "45", you can write it as a product of prime numbers:
       </P>
-
-      <Callout>72 = 2 × 2 × 2 × 3 × 3 = 2³ × 3²</Callout>
-
-      <P>This tells you: 72 has three 2s and two 3s.</P>
-
-      <P>What about 45?</P>
 
       <Callout>45 = 3 × 3 × 5 = 3² × 5</Callout>
 
       <P>
-        Now you can see at a glance: 45 is divisible by 3 (it has 3s), divisible
-        by 5 (it has a 5), but not divisible by 2 (no 2s).
+        Now you can see at a glance: 45 has a 3 and a 5, so it's divisible by 15.
+      </P>
+
+      <P>What about 225?</P>
+
+      <Callout>225 = 3 × 3 × 5 × 5 = 3² × 5²</Callout>
+
+      <P>
+        Two 3s and two 5s. Divisible by 15 twice — which is why 1/15 took two steps!
       </P>
 
       <Spacer />
@@ -45,8 +46,26 @@ const Chapter3PrimeFactors: React.FC = () => {
       <H3>Now watch closely</H3>
 
       <P>
-        Here's 72 with the fraction 3/2. As you step through, write down each
-        number in prime factor form. What do you notice?
+        Here's the 1/15 game again, but now showing the prime factors.
+        Watch what happens to the 3s and 5s as you step through.
+      </P>
+
+      <WidgetContainer label="225 with 1/15">
+        <NumberGameWidget
+          program={["1/15"]}
+          initialN={225}
+          showPrimeFactors={true}
+          editableStart={true}
+        />
+      </WidgetContainer>
+
+      <Spacer />
+
+      <H3>What about 3/2?</H3>
+
+      <P>
+        Let's try a different fraction. Here's 72 = 2³ × 3² with the fraction 3/2.
+        Watch the prime factors at each step.
       </P>
 
       <WidgetContainer label="72 with 3/2">
@@ -57,23 +76,13 @@ const Chapter3PrimeFactors: React.FC = () => {
         />
       </WidgetContainer>
 
-      <Spacer />
-
-      <H3>Try another</H3>
-
       <P>
-        Here's 32 with the fraction 9/2. Remember: 9 = 3². Write down the prime
-        factors at each step.
+        What pattern do you notice?
       </P>
 
-      <WidgetContainer label="32 with 9/2">
-        <NumberGameWidget
-          program={["9/2"]}
-          initialN={32}
-          showPrimeFactors={true}
-          editableStart={true}
-        />
-      </WidgetContainer>
+      <Spoiler label="See pattern">
+        Each step removes a 2 and adds a 3. The fraction 3/2 literally means "trade a 2 for a 3."
+      </Spoiler>
 
       <Spacer />
     </>
