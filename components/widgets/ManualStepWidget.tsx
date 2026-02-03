@@ -63,8 +63,9 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
             // Terminates cleanly
             decimalResult = trimmed;
           } else {
-            // Non-terminating, show truncated with ...
-            decimalResult = rawResult.toFixed(2).replace(/0+$/, '').replace(/\.$/, '') + '...';
+            // Non-terminating - truncate (don't round) to 2 decimal places, add ...
+            const truncated = Math.floor(rawResult * 100) / 100;
+            decimalResult = truncated.toFixed(2).replace(/0+$/, '').replace(/\.$/, '') + '...';
           }
         }
         setPhase({ type: 'correct_no', ruleIndex: phase.ruleIndex, decimalResult });
