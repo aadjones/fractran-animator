@@ -7,22 +7,18 @@ import {
   WidgetContainer,
 } from "../components/Prose";
 import MiniSim from "../components/widgets/MiniSim";
+import ProgramBuilder from "../components/widgets/ProgramBuilder";
 
 const Chapter6Computation: React.FC = () => {
   return (
     <>
       <P>
-        What if you wanted to add two numbers together?
+        Look at this program again. It's from Chapter 1.
       </P>
 
-      <P>
-        Put one number in column 2, another in column 3. Use two fractions
-        to move everything into column 5.
-      </P>
-
-      <WidgetContainer label="Addition">
+      <WidgetContainer label="The original game">
         <MiniSim
-          program={["5/2", "5/3"]}
+          program={["3/2", "5/3"]}
           initialRegisters={{ 2: 3, 3: 4 }}
           editableRegisters={[2, 3]}
           showRules={true}
@@ -30,52 +26,37 @@ const Chapter6Computation: React.FC = () => {
       </WidgetContainer>
 
       <P>
-        3 + 4 = ?
+        Put 3 in column 2. Put 4 in column 3. Run it.
       </P>
 
       <P>
-        You just built a program that computes a + b.</P>
+        How many dots end up in column 5?
+      </P>
+
+      <Callout>
+        This program computes addition.
+      </Callout>
 
       <Spacer />
 
-      <H3>Multiplication</H3>
+      <H3>Try this</H3>
 
       <P>
-        What if you wanted to double the count in column 2?
-      </P>
-
-      <P>
-        You'd need to turn each dot in column 2 into two dots somewhere.
-        But you can't put them back in column 2 mid-process (why not?).
-      </P>
-
-      <P>
-        Try this: move each dot from 2 to 3, but add two dots to 5 at the same time.
-        Then move everything from 5 back to 2.
+        Can you write a single fraction that doubles the count in column 2?
+        (The result can end up in a different column.)
       </P>
 
       <WidgetContainer label="Doubling">
-        <MiniSim
-          program={["75/2", "2/5"]}
-          initialRegisters={{ 2: 3 }}
-          editableRegisters={[2]}
-          showRules={true}
+        <ProgramBuilder
+          initialRegisters={{ 2: 4 }}
+          editableRegisters={[2, 3]}
+          goalDescription="Double the count from column 2"
         />
       </WidgetContainer>
 
-      <P>
-        75 = 3 × 5². So 75/2 takes one from column 2, adds one to column 3,
-        and adds two to column 5.
-      </P>
-
-      <P>
-        When column 2 is empty, the second rule kicks in: 2/5 moves dots
-        from 5 back to 2.
-      </P>
-
       <Spacer />
 
-      <H3>This is a programming language</H3>
+      <H3>What is this?</H3>
 
       <P>
         What you've been doing is called FRACTRAN. It was invented by
@@ -83,44 +64,13 @@ const Chapter6Computation: React.FC = () => {
       </P>
 
       <P>
-        It's one of the simplest programming languages that can compute anything
-        a regular computer can compute. The columns are memory. The fractions
-        are instructions.
+        The columns are memory. The fractions are instructions.
+        It's one of the simplest programming languages ever designed.
       </P>
 
       <Callout>
         A list of fractions. A starting number. That's it. That's the whole language.
       </Callout>
-
-      <Spacer />
-
-      <H3>One more thing</H3>
-
-      <P>
-        There's a famous FRACTRAN program that generates prime numbers.
-        It has 14 fractions.
-      </P>
-
-      <WidgetContainer label="PRIMEGAME">
-        <MiniSim
-          program={[
-            "17/91", "78/85", "19/51", "23/38", "29/33",
-            "77/29", "95/23", "77/19", "1/17", "11/13",
-            "13/11", "15/14", "15/2", "55/1"
-          ]}
-          initialRegisters={{ 2: 1 }}
-          showRules={true}
-        />
-      </WidgetContainer>
-
-      <P>
-        Run it. Every time the value becomes a power of 2 (like 4, 8, 32, 128...),
-        the exponent is a prime number.
-      </P>
-
-      <P>
-        This tiny program finds every prime. Forever.
-      </P>
 
       <Spacer />
     </>
