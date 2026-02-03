@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  P,
-  H3,
-  Callout,
-  Spacer,
-  WidgetContainer,
-} from "../components/Prose";
+import { P, H3, Callout, Spacer, WidgetContainer, Spoiler } from "../components/Prose";
 import NumberGameWidget from "../components/widgets/NumberGameWidget";
 
 const Chapter3PrimeFactors: React.FC = () => {
@@ -17,14 +11,13 @@ const Chapter3PrimeFactors: React.FC = () => {
       </P>
 
       <P>
-        But 15 = 3 × 5. So really, it worked when your number was divisible by 3
-        <em> and </em> divisible by 5.
+        Wouldn't it be nice if you could look at a number and immediately see
+        whether it is divisible by 15? How would you do that?
       </P>
 
-      <P>
-        Wouldn't it be nice if you could look at a number and immediately see
-        whether it has 3s and 5s in it?
-      </P>
+      <Spoiler label="One idea">
+        Break the number into its prime factors. If it has at least one 3 and at least one 5, it's divisible by 15.
+      </Spoiler>
 
       <Spacer />
 
@@ -34,21 +27,13 @@ const Chapter3PrimeFactors: React.FC = () => {
         Instead of writing "72", you can write it as a product of prime numbers:
       </P>
 
-      <Callout>
-        72 = 2 × 2 × 2 × 3 × 3 = 2³ × 3²
-      </Callout>
+      <Callout>72 = 2 × 2 × 2 × 3 × 3 = 2³ × 3²</Callout>
 
-      <P>
-        This tells you: 72 has three 2s and two 3s.
-      </P>
+      <P>This tells you: 72 has three 2s and two 3s.</P>
 
-      <P>
-        What about 45?
-      </P>
+      <P>What about 45?</P>
 
-      <Callout>
-        45 = 3 × 3 × 5 = 3² × 5
-      </Callout>
+      <Callout>45 = 3 × 3 × 5 = 3² × 5</Callout>
 
       <P>
         Now you can see at a glance: 45 is divisible by 3 (it has 3s), divisible
@@ -65,7 +50,11 @@ const Chapter3PrimeFactors: React.FC = () => {
       </P>
 
       <WidgetContainer label="72 with 3/2">
-        <NumberGameWidget program={["3/2"]} initialN={72} showPrimeFactors={true} />
+        <NumberGameWidget
+          program={["3/2"]}
+          initialN={72}
+          showPrimeFactors={true}
+        />
       </WidgetContainer>
 
       <Spacer />
@@ -78,7 +67,12 @@ const Chapter3PrimeFactors: React.FC = () => {
       </P>
 
       <WidgetContainer label="32 with 9/2">
-        <NumberGameWidget program={["9/2"]} initialN={32} showPrimeFactors={true} editableStart={true} />
+        <NumberGameWidget
+          program={["9/2"]}
+          initialN={32}
+          showPrimeFactors={true}
+          editableStart={true}
+        />
       </WidgetContainer>
 
       <Spacer />
