@@ -2,6 +2,8 @@ import { ChapterMeta } from '../types';
 import Chapter1Intro from './Chapter1Intro';
 import Chapter2NumberGame from './Chapter2NumberGame';
 import Chapter3PrimeFactors from './Chapter3PrimeFactors';
+import Chapter4Visualization from './Chapter4Visualization';
+import Chapter5Puzzles from './Chapter5Puzzles';
 
 export const CHAPTERS: ChapterMeta[] = [
   {
@@ -24,5 +26,19 @@ export const CHAPTERS: ChapterMeta[] = [
     title: 'A Different View',
     subtitle: 'What the numbers are hiding',
     component: Chapter3PrimeFactors,
+  },
+  {
+    id: 'visualization',
+    number: 4,
+    title: 'Seeing the Pattern',
+    subtitle: 'Dots and columns',
+    component: Chapter4Visualization,
+  },
+  {
+    id: 'puzzles',
+    number: 5,
+    title: 'Design Your Own',
+    subtitle: 'Puzzles and challenges',
+    component: Chapter5Puzzles,
   },
 ];
