@@ -12,29 +12,29 @@ const Chapter6Computation: React.FC = () => {
   return (
     <>
       <P>
-        Remember puzzle 1? Moving dots from column 2 to column 3?
+        What if you wanted to add two numbers together?
       </P>
 
       <P>
-        The solution was 3/2. One fraction. But look what it actually does:
+        Put one number in column 2, another in column 3. Use two fractions
+        to move everything into column 5.
       </P>
 
       <WidgetContainer label="Addition">
         <MiniSim
-          program={["3/2"]}
-          initialRegisters={{ 2: 4 }}
-          editableRegisters={[2]}
+          program={["5/2", "5/3"]}
+          initialRegisters={{ 2: 3, 3: 4 }}
+          editableRegisters={[2, 3]}
           showRules={true}
         />
       </WidgetContainer>
 
       <P>
-        Start with 4 dots in column 2. End with 4 dots in column 3.
+        3 + 4 = ?
       </P>
 
       <P>
-        That's addition. You just built a program that adds to a number.
-      </P>
+        You just built a program that computes a + b.</P>
 
       <Spacer />
 
