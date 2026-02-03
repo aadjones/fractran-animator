@@ -4,6 +4,7 @@ import Chapter2NumberGame from './Chapter2NumberGame';
 import Chapter3PrimeFactors from './Chapter3PrimeFactors';
 import Chapter4Visualization from './Chapter4Visualization';
 import Chapter5Puzzles from './Chapter5Puzzles';
+import Chapter6Computation from './Chapter6Computation';
 
 export const CHAPTERS: ChapterMeta[] = [
   {
@@ -40,5 +41,12 @@ export const CHAPTERS: ChapterMeta[] = [
     title: 'Design Your Own',
     subtitle: 'Puzzles and challenges',
     component: Chapter5Puzzles,
+  },
+  {
+    id: 'computation',
+    number: 6,
+    title: 'It Computes',
+    subtitle: 'What you just built',
+    component: Chapter6Computation,
   },
 ];
