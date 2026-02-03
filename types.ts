@@ -42,3 +42,11 @@ export interface Preset {
 }
 
 export type AnimationPhase = 'idle' | 'scanning' | 'selecting' | 'consuming' | 'producing';
+
+export interface ChapterMeta {
+  id: string;
+  number: number;
+  title: string;
+  subtitle?: string;
+  component: React.ComponentType;
+}
