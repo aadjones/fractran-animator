@@ -10,6 +10,7 @@ interface ManualStepWidgetProps {
 type Phase =
   | { type: 'checking'; ruleIndex: number }
   | { type: 'wrong_answer'; ruleIndex: number; userSaidYes: boolean }
+  | { type: 'correct_no'; ruleIndex: number; decimalResult: string }
   | { type: 'calculate'; ruleIndex: number }
   | { type: 'wrong_calculation'; ruleIndex: number; userAnswer: number }
   | { type: 'step_complete'; result: number }
@@ -48,14 +49,13 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         // Rule applies, now ask for calculation
         setPhase({ type: 'calculate', ruleIndex: phase.ruleIndex });
       } else {
-        // Rule doesn't apply, move to next
-        if (phase.ruleIndex + 1 < fractions.length) {
-          setPhase({ type: 'checking', ruleIndex: phase.ruleIndex + 1 });
-        } else {
-          // No rules apply - halt!
-          setPhase({ type: 'halted' });
-          onComplete?.();
-        }
+        // Rule doesn't apply - show confirmation with the decimal result
+        const f = fractions[phase.ruleIndex];
+        const rawResult = (currentN * f.numerator) / f.denominator;
+        const decimalResult = Number.isInteger(rawResult)
+          ? rawResult.toString()
+          : rawResult.toFixed(2).replace(/\.?0+$/, '');
+        setPhase({ type: 'correct_no', ruleIndex: phase.ruleIndex, decimalResult });
       }
     } else {
       // Wrong answer
@@ -96,7 +96,19 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
     }
   };
 
-  const currentFraction = (phase.type !== 'halted' && phase.type !== 'step_complete')
+  const handleNextRule = () => {
+    if (phase.type !== 'correct_no') return;
+
+    if (phase.ruleIndex + 1 < fractions.length) {
+      setPhase({ type: 'checking', ruleIndex: phase.ruleIndex + 1 });
+    } else {
+      // No rules apply - halt!
+      setPhase({ type: 'halted' });
+      onComplete?.();
+    }
+  };
+
+  const currentFraction = (phase.type !== 'halted' && phase.type !== 'step_complete' && 'ruleIndex' in phase)
     ? fractions[phase.ruleIndex]
     : null;
 
@@ -190,6 +202,26 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
             >
               Got it
+            </button>
+          </div>
+        )}
+
+        {/* Correct "No" feedback - rule doesn't apply */}
+        {phase.type === 'correct_no' && currentFraction && (
+          <div className="text-center">
+            <p className="text-green-400 mb-2">
+              Right! {currentN} × {currentFraction.numerator}/{currentFraction.denominator} = {phase.decimalResult}, not a whole number.
+            </p>
+            <p className="text-gray-400 mb-4 text-sm">
+              {phase.ruleIndex + 1 < fractions.length
+                ? "So we try the next fraction."
+                : "No more fractions to try."}
+            </p>
+            <button
+              onClick={handleNextRule}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+            >
+              {phase.ruleIndex + 1 < fractions.length ? "Next fraction" : "Continue"}
             </button>
           </div>
         )}
