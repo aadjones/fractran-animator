@@ -57,7 +57,9 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>1/6</strong>
+          <ol className="list-decimal list-inside space-y-1 font-mono">
+            <li>1/6</li>
+          </ol>
         </Spoiler>
 
         <Spacer />
@@ -75,7 +77,11 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>5/6, 1/2, 1/3</strong>
+          <ol className="list-decimal list-inside space-y-1 font-mono">
+            <li>5/6</li>
+            <li>1/2</li>
+            <li>1/3</li>
+          </ol>
         </Spoiler>
 
         <Spacer />
@@ -93,7 +99,11 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>5/2, 2/3, 3/5</strong>
+          <ol className="list-decimal list-inside space-y-1 font-mono">
+            <li>5/2</li>
+            <li>2/3</li>
+            <li>3/5</li>
+          </ol>
         </Spoiler>
 
         <Spacer />
