@@ -4,6 +4,7 @@ import {
   H3,
   Spacer,
   WidgetContainer,
+  Spoiler,
 } from "../components/Prose";
 import ProgramBuilder from "../components/widgets/ProgramBuilder";
 
@@ -29,6 +30,10 @@ const Chapter5Puzzles: React.FC = () => {
         />
       </WidgetContainer>
 
+      <Spoiler label="See solution">
+        <p className="font-mono">3/2</p>
+      </Spoiler>
+
       <Spacer />
 
       <H3>Puzzle 2: The yo-yo</H3>
@@ -46,6 +51,13 @@ const Chapter5Puzzles: React.FC = () => {
         />
       </WidgetContainer>
 
+      <Spoiler label="See solution">
+        <ol className="list-decimal list-inside space-y-1 font-mono">
+          <li>3/2</li>
+          <li>2/3</li>
+        </ol>
+      </Spoiler>
+
       <Spacer />
 
       <H3>Puzzle 3: Combine 2s and 3s into 5s</H3>
@@ -62,6 +74,10 @@ const Chapter5Puzzles: React.FC = () => {
           goalDescription="Combine 2s and 3s into 5s"
         />
       </WidgetContainer>
+
+      <Spoiler label="See solution">
+        <p className="font-mono">5/6</p>
+      </Spoiler>
 
       <Spacer />
     </>
