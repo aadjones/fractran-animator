@@ -40,10 +40,10 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
 
   // Height needs to be small enough so 2 rows fit on screen
   const containerHeight = isHighDensity
-    ? "h-36 md:h-44" 
+    ? "h-24 md:h-28"
     : isCompact
-        ? "h-56 md:h-64"
-        : "h-64 md:h-80";
+        ? "h-40 md:h-48"
+        : "h-56 md:h-64";
   
   const beadSize = isHighDensity
     ? "w-1.5 h-1.5 md:w-2 md:h-2"
