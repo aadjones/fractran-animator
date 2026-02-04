@@ -77,10 +77,10 @@ const Chapter4Visualization: React.FC = () => {
         45 = 3² × 5, so two dots in the "3" column and one dot in the "5" column.
       </Spoiler>
 
-      <P>What about 100?</P>
+      <P>How would you describe in words what the fraction 7/3 does?</P>
 
       <Spoiler label="See answer">
-        100 = 2² × 5², so two dots in the "2" column and two dots in the "5" column.
+        It replaces a factor of 3 with a factor of 7 — or in dot terms, it moves one dot from the "3" column to the "7" column.
       </Spoiler>
 
       <Spacer />
