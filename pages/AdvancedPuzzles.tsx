@@ -44,19 +44,20 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
       <main className="max-w-2xl mx-auto px-6 py-8 md:py-12">
         <H3>Puzzle: Subtraction</H3>
 
-        <P>Write a program that computes 5 − 3.</P>
+        <P>
+          Compute b − a. The answer should end up in column 3.
+        </P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
-            initialRegisters={{ 2: 5, 3: 3 }}
+            initialRegisters={{ 2: 3, 3: 5 }}
             editableRegisters={[2, 3]}
-            goalDescription="Compute 5 − 3"
+            goalDescription="Compute b − a (answer in column 3)"
           />
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>1/6</strong> — removes one from each column per step until one
-          empties. The remainder is the difference.
+          <strong>1/6</strong>
         </Spoiler>
 
         <Spacer />
@@ -74,8 +75,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>5/6</strong> — each step moves one "pair" to column 5. When
-          one input empties, you've counted min(a, b).
+          <strong>5/6</strong>
         </Spoiler>
 
         <Spacer />
@@ -93,7 +93,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>5/2, 2/3, 3/5</strong> — you need a temp column.
+          <strong>5/2, 2/3, 3/5</strong>
         </Spoiler>
 
         <Spacer />
