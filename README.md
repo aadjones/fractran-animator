@@ -1,12 +1,25 @@
-# FRACTRAN
+# FRACTRAN Animator
 
 A guided, interactive exploration of Conway's FRACTRAN — an esoteric programming language that uses fraction multiplication to perform computation. Built as an explorable explanation in the style of Nicky Case and Exploding Dots.
 
+**[Try it live](https://yourusername.github.io/fractran-animator/)**
+
 ## What's here
 
-- **Guided chapters** that introduce FRACTRAN from scratch — starting as a simple number game, building to the insight of prime factorization, and culminating in Conway's PRIMEGAME
-- **Interactive widgets** embedded in the narrative — step through computations, experiment with different inputs
-- **Full sandbox** for free-play with any FRACTRAN program, including preset programs (addition, multiplication, Fibonacci, division, prime generation)
+**Guided chapters** that let you *discover* how FRACTRAN works:
+
+1. **The Game** — Learn the rules by playing: multiply by the first fraction that works
+2. **Number Game** — Explore single-fraction games and see what they do
+3. **Prime Factors** — The key insight: see numbers as products of primes
+4. **Visualization** — Watch dots move between prime columns
+5. **Puzzles** — Design your own fraction rules
+6. **Computation** — The reveal: this "game" is actually programming
+
+**Philosophy:** No spoilers. You discover patterns before being told what they mean. "Game" terminology is used until you earn the word "program."
+
+**Also includes:**
+- **Full sandbox** for free-play with any FRACTRAN program
+- **Preset programs** (addition, multiplication, Fibonacci, prime generation)
 
 ## Run Locally
 
@@ -43,14 +56,16 @@ npm run deploy
     fractranLogic.ts           # Pure FRACTRAN simulation logic
 
   components/
-    RegisterBoard.tsx          # Bead visualization (prime registers)
+    RegisterBoard.tsx          # Bead visualization (prime columns)
     ProgramPanel.tsx           # Rule list with scanning animation
     Controls.tsx               # Play/pause/step/speed/scrubber
     ChapterLayout.tsx          # Chapter page shell
-    Prose.tsx                  # Styled typography for narrative
+    Prose.tsx                  # Styled typography + Spoiler component
     widgets/
-      NumberGameWidget.tsx     # Raw number view (pre-insight)
-      MiniSim.tsx              # Self-contained compact simulator
+      NumberGameWidget.tsx     # Number-based view (early chapters)
+      ManualStepWidget.tsx     # Interactive "is this a whole number?" widget
+      MiniSim.tsx              # Compact simulator with dot visualization
+      ProgramBuilder.tsx       # User creates their own fraction rules
 
   chapters/                    # Chapter content (JSX)
   pages/
