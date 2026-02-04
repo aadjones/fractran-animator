@@ -31,18 +31,18 @@ const Chapter5Puzzles: React.FC = () => {
 
       <Spacer />
 
-      <H3>Puzzle 2: Loop forever</H3>
+      <H3>Puzzle 2: The yo-yo</H3>
 
       <P>
-        Write a program with two fractions that loops forever, bouncing dots
-        back and forth between columns.
+        Write two fractions that make a dot bounce back and forth between
+        columns 2 and 3 forever: 2 → 3 → 2 → 3 → ...
       </P>
 
       <WidgetContainer label="Build it">
         <ProgramBuilder
           initialRegisters={{ 2: 1 }}
           editableRegisters={[2, 3]}
-          goalDescription="Make it loop forever"
+          goalDescription="Bounce forever: 2 → 3 → 2 → 3 → ..."
         />
       </WidgetContainer>
 
