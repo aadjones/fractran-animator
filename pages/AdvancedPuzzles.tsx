@@ -1,8 +1,7 @@
 import React from "react";
 import { ArrowLeft } from "lucide-react";
-import { P, H3, Callout, Spacer, WidgetContainer, Spoiler } from "../components/Prose";
+import { P, H3, Spacer, WidgetContainer, Spoiler } from "../components/Prose";
 import ProgramBuilder from "../components/widgets/ProgramBuilder";
-import MiniSim from "../components/widgets/MiniSim";
 
 interface AdvancedPuzzlesProps {
   onNavigate: (path: string) => void;
@@ -45,117 +44,57 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
       <main className="max-w-2xl mx-auto px-6 py-8 md:py-12">
         <H3>Puzzle: Subtraction</H3>
 
-        <P>
-          Start with some dots in column 2 and some in column 3. Write a single
-          fraction that removes one dot from <em>each</em> column per step.
-        </P>
-
-        <P>
-          When the program halts, the remaining dots tell you which column
-          started with more — and by how much!
-        </P>
+        <P>Write a program that computes 5 − 3.</P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
             initialRegisters={{ 2: 5, 3: 3 }}
             editableRegisters={[2, 3]}
-            goalDescription="Remove one from each column per step"
+            goalDescription="Compute 5 − 3"
           />
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          The fraction is <strong>1/6</strong>. Since 6 = 2 × 3, it consumes one
-          2 and one 3 each step, producing nothing. When one column empties, the
-          program halts. The remaining dots = the difference!
+          <strong>1/6</strong> — removes one from each column per step until one
+          empties. The remainder is the difference.
         </Spoiler>
 
         <Spacer />
 
         <H3>Puzzle: Find the minimum</H3>
 
-        <P>
-          This is similar to subtraction. If you run 1/6 and count how many
-          steps it takes before halting, that count equals the <em>smaller</em>{" "}
-          of the two starting values.
-        </P>
-
-        <P>
-          But how do you "count" steps in FRACTRAN? You need a third column to
-          accumulate the count!
-        </P>
-
-        <P>
-          Write a fraction that removes one dot from columns 2 and 3, while
-          adding one to column 5.
-        </P>
+        <P>Write a program that computes min(4, 7). The answer should end up in column 5.</P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
             initialRegisters={{ 2: 4, 3: 7 }}
             editableRegisters={[2, 3, 5]}
-            goalDescription="Count steps in column 5 = min(col2, col3)"
+            goalDescription="Compute min(4, 7) in column 5"
           />
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          The fraction is <strong>5/6</strong>. Each step consumes 2 × 3 and
-          produces 5. The final count in column 5 equals min(4, 7) = 4.
+          <strong>5/6</strong> — each step moves one "pair" to column 5. When
+          one input empties, you've counted min(a, b).
         </Spoiler>
 
         <Spacer />
 
         <H3>Puzzle: The swap</H3>
 
-        <P>
-          Here's a classic programming problem: swap the values in two columns.
-          Move everything from column 2 to column 3, and everything from column
-          3 to column 2.
-        </P>
-
-        <P>
-          The catch: you can't do it with just two columns. You need a{" "}
-          <em>temporary</em> column to hold values while swapping!
-        </P>
-
-        <Callout>
-          This is the same problem you hit in regular programming: you can't
-          swap two variables without a temp.
-        </Callout>
-
-        <P>
-          Write three fractions that swap columns 2 and 3 using column 5 as
-          temporary storage.
-        </P>
+        <P>Swap the values in columns 2 and 3.</P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
             initialRegisters={{ 2: 4, 3: 2 }}
             editableRegisters={[2, 3, 5]}
-            goalDescription="Swap: 2↔3 (using 5 as temp)"
+            goalDescription="Swap columns 2 and 3"
           />
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          One solution: <strong>5/2, 2/3, 3/5</strong>
-          <br />
-          <br />
-          First, 5/2 moves all 2s → 5s (temp).
-          <br />
-          Then, 2/3 moves all 3s → 2s.
-          <br />
-          Finally, 3/5 moves temp (5s) → 3s.
+          <strong>5/2, 2/3, 3/5</strong> — you need a temp column.
         </Spoiler>
-
-        <P>Here's what the swap looks like in action:</P>
-
-        <WidgetContainer label="The swap">
-          <MiniSim
-            program={["5/2", "2/3", "3/5"]}
-            initialRegisters={{ 2: 4, 3: 2 }}
-            editableRegisters={[2, 3]}
-            showRules={true}
-          />
-        </WidgetContainer>
 
         <Spacer />
 
