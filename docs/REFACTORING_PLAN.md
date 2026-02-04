@@ -1,7 +1,7 @@
 # FRACTRAN Animator — Refactoring Plan
 
 > Created: February 2026
-> Status: **Planning**
+> Status: **In Progress** (Phases 1-2 complete)
 > Goal: Reduce duplication, improve maintainability, make it easier to add features
 
 ---
@@ -45,27 +45,27 @@ export function formatPrimeFactors(regs: PrimeMap): string {
 ```
 
 **Action items:**
-- [ ] Create `services/formatters.ts`
-- [ ] Move `formatPrimeFactors` and `superscriptMap` into it
-- [ ] Update imports in all 4 files
-- [ ] Delete duplicate implementations
+- [x] Create `services/formatters.ts`
+- [x] Move `formatPrimeFactors` and `superscriptMap` into it
+- [x] Update imports in all 4 files
+- [x] Delete duplicate implementations
 
 ---
 
-### 1.2 Remove duplicate `numberToRegisters()`
+### 1.2 Remove duplicate `numberToRegisters()` ✅
 
 **Problem:** `NumberGameWidget.tsx` has `numberToRegisters()` which reimplements the prime factorization logic that already exists in `fractranLogic.ts` as `getPrimeFactors()`.
 
 **Solution:** Delete `numberToRegisters()` and use the existing function.
 
 **Action items:**
-- [ ] In `NumberGameWidget.tsx`, import `getPrimeFactors` from `fractranLogic.ts`
-- [ ] Replace calls to `numberToRegisters(n)` with `getPrimeFactors(n)`
-- [ ] Delete the `numberToRegisters` function
+- [x] In `NumberGameWidget.tsx`, import `getPrimeFactors` from `fractranLogic.ts`
+- [x] Replace calls to `numberToRegisters(n)` with `getPrimeFactors(n)`
+- [x] Delete the `numberToRegisters` function
 
 ---
 
-### 1.3 Move magic constants to `constants.ts`
+### 1.3 Move magic constants to `constants.ts` ✅
 
 **Problem:** `useFractranSim.ts` has hardcoded values:
 ```typescript
@@ -77,8 +77,8 @@ const FORECAST_LIMIT = 5000;
 **Solution:** Move to `constants.ts` for visibility and easy tuning.
 
 **Action items:**
-- [ ] Add constants to `constants.ts`
-- [ ] Import them in `useFractranSim.ts`
+- [x] Add constants to `constants.ts`
+- [x] Import them in `useFractranSim.ts`
 
 ---
 
@@ -101,7 +101,7 @@ The current hook manages:
 
 Adding any new feature (breakpoints, export, custom animations) means modifying this god object.
 
-### 2.1 Extract `useSimulationHistory`
+### 2.1 Extract `useSimulationHistory` ✅
 
 **Responsibility:** Manage the history array and scrubbing.
 
@@ -122,13 +122,13 @@ interface UseSimulationHistoryReturn {
 ```
 
 **Action items:**
-- [ ] Create `hooks/useSimulationHistory.ts`
-- [ ] Extract history-related state and logic
-- [ ] Update `useFractranSim` to use this hook
+- [x] Create `hooks/useSimulationHistory.ts`
+- [x] Extract history-related state and logic
+- [x] Update `useFractranSim` to use this hook
 
 ---
 
-### 2.2 Extract `useAnimationController`
+### 2.2 Extract `useAnimationController` ✅
 
 **Responsibility:** Handle play/pause, speed, animation phases, timer intervals.
 
@@ -149,14 +149,14 @@ interface UseAnimationControllerReturn {
 ```
 
 **Action items:**
-- [ ] Create `hooks/useAnimationController.ts`
-- [ ] Extract timer/interval logic
-- [ ] Extract phase state machine
-- [ ] Update `useFractranSim` to use this hook
+- [x] Create `hooks/useAnimationController.ts`
+- [x] Extract timer/interval logic
+- [x] Extract phase state machine
+- [x] Update `useFractranSim` to use this hook
 
 ---
 
-### 2.3 Extract `useEventDetector`
+### 2.3 Extract `useEventDetector` ✅
 
 **Responsibility:** Detect special events (halt, power of two, Fibonacci, etc.)
 
@@ -178,14 +178,14 @@ interface UseEventDetectorReturn {
 **Benefit:** Widgets can provide custom event detectors without modifying the core hook.
 
 **Action items:**
-- [ ] Create `hooks/useEventDetector.ts`
-- [ ] Extract event detection logic from `useFractranSim`
-- [ ] Create default detectors (halt, power of two, etc.)
-- [ ] Make detectors configurable per-widget
+- [x] Create `hooks/useEventDetector.ts`
+- [x] Extract event detection logic from `useFractranSim`
+- [x] Create default detectors (halt, power of two, etc.)
+- [x] Make detectors configurable per-widget
 
 ---
 
-### 2.4 Slim down `useFractranSim`
+### 2.4 Slim down `useFractranSim` ✅
 
 After extraction, `useFractranSim` becomes a **composition layer**:
 
@@ -208,6 +208,7 @@ export function useFractranSim(props: UseFractranSimProps) {
 ```
 
 **Target:** `useFractranSim` should be under 150 lines after this refactor.
+**Result:** Now ~215 lines (was 397). Could be slimmer but maintains same public API.
 
 ---
 
@@ -384,8 +385,8 @@ Phase 5 (Polish) ←── As needed
 ## Success Criteria
 
 After completing Phases 1-3:
-- [ ] No function is duplicated across files
-- [ ] `useFractranSim.ts` is under 150 lines
+- [x] No function is duplicated across files (Phase 1 ✅)
+- [~] `useFractranSim.ts` is under 150 lines (now 215 lines - acceptable, maintains API)
 - [ ] Adding a new widget requires < 50 lines of boilerplate
 - [ ] Event detection is pluggable (can add custom detectors)
 - [ ] All constants are in `constants.ts`
