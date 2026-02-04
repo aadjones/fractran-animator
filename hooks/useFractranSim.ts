@@ -1,11 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Fraction, ProgramState, PrimeMap, SimulationEvent, EventType, AnimationPhase } from '../types';
 import { parseProgram, stepSimulation, canApplyRule, applyRule, calculateValue } from '../services/fractranLogic';
-import { PRIMES } from '../constants';
-
-const MAX_HISTORY_DEFAULT = 2000;
-const INSTANT_SPEED_THRESHOLD = 90;
-const FORECAST_LIMIT = 5000;
+import { PRIMES, MAX_HISTORY_DEFAULT, INSTANT_SPEED_THRESHOLD, FORECAST_LIMIT } from '../constants';
 
 // Dry run to find halt step
 const calculateMaxSteps = (regs: PrimeMap, program: Fraction[]): number | null => {

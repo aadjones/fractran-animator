@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PrimeMap, EventType } from '../../types';
 import { useFractranSim } from '../../hooks/useFractranSim';
 import { calculateValue } from '../../services/fractranLogic';
+import { formatPrimeFactors } from '../../services/formatters';
 import RegisterBoard from '../RegisterBoard';
 import Controls from '../Controls';
 import { Plus, X } from 'lucide-react';
@@ -16,27 +17,6 @@ interface ProgramBuilderProps {
   initialRegisters: PrimeMap;
   editableRegisters?: number[];
   goalDescription?: string;
-}
-
-// Format PrimeMap as "2³ × 3²"
-function formatPrimeFactors(regs: PrimeMap): string {
-  const primes = Object.keys(regs).map(Number).sort((a, b) => a - b);
-  if (primes.length === 0) return '1';
-
-  const superscripts: Record<string, string> = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
-  };
-
-  const toSuperscript = (n: number): string => {
-    if (n === 1) return '';
-    return String(n).split('').map(d => superscripts[d]).join('');
-  };
-
-  return primes
-    .filter(p => regs[p] > 0)
-    .map(p => `${p}${toSuperscript(regs[p])}`)
-    .join(' × ');
 }
 
 const ProgramBuilder: React.FC<ProgramBuilderProps> = ({

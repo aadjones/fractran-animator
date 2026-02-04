@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { PrimeMap } from '../../types';
-import { parseProgram, canApplyRule, applyRule, calculateValue } from '../../services/fractranLogic';
+import { parseProgram, canApplyRule, applyRule, calculateValue, getPrimeFactors } from '../../services/fractranLogic';
+import { formatPrimeFactors } from '../../services/formatters';
 import { Play, Pause, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface NumberGameWidgetProps {
@@ -11,48 +12,10 @@ interface NumberGameWidgetProps {
   showPrimeFactors?: boolean;
 }
 
-// Format PrimeMap as "2³ × 3²"
-function formatPrimeFactors(regs: PrimeMap): string {
-  const primes = Object.keys(regs).map(Number).sort((a, b) => a - b);
-  if (primes.length === 0) return '1';
-
-  const superscripts: Record<string, string> = {
-    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
-  };
-
-  const toSuperscript = (n: number): string => {
-    if (n === 1) return '';
-    return String(n).split('').map(d => superscripts[d]).join('');
-  };
-
-  return primes
-    .map(p => `${p}${toSuperscript(regs[p])}`)
-    .join(' × ');
-}
-
 interface NumberStep {
   n: string;
   ruleApplied: number | null; // index of fraction that was applied, or null if start/halt
   registers: PrimeMap;
-}
-
-// Convert a single number to PrimeMap
-function numberToRegisters(n: number): PrimeMap {
-  const regs: PrimeMap = {};
-  let d = 2;
-  let temp = n;
-  while (d * d <= temp) {
-    while (temp % d === 0) {
-      regs[d] = (regs[d] || 0) + 1;
-      temp /= d;
-    }
-    d++;
-  }
-  if (temp > 1) {
-    regs[temp] = (regs[temp] || 0) + 1;
-  }
-  return regs;
 }
 
 const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
@@ -68,7 +31,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   const [steps, setSteps] = useState<NumberStep[]>(() => [{
     n: String(initialN),
     ruleApplied: null,
-    registers: numberToRegisters(initialN),
+    registers: getPrimeFactors(initialN),
   }]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [halted, setHalted] = useState(false);
@@ -117,7 +80,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
     setIsPlaying(false);
     setHalted(false);
     if (timerRef.current) clearTimeout(timerRef.current);
-    const regs = numberToRegisters(startN);
+    const regs = getPrimeFactors(startN);
     setSteps([{ n: String(startN), ruleApplied: null, registers: regs }]);
   };
 
@@ -127,7 +90,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
     setStartN(val);
     setIsPlaying(false);
     setHalted(false);
-    const regs = numberToRegisters(val);
+    const regs = getPrimeFactors(val);
     setSteps([{ n: String(val), ruleApplied: null, registers: regs }]);
   };
 
