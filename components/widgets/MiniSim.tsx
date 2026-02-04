@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Maximize2, X, Play } from 'lucide-react';
+
+// Mobile breakpoint (matches Tailwind's md)
+const MOBILE_BREAKPOINT = 768;
 import { EventType } from '../../types';
 import { useFractranSim } from '../../hooks/useFractranSim';
 import { calculateValue } from '../../services/fractranLogic';
@@ -42,6 +45,21 @@ const MiniSim: React.FC<MiniSimProps> = ({
   title,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  );
+
+  // Listen for resize to update mobile state
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // On mobile, force preview mode for inline widgets (unless already previewOnly)
+  const usePreviewMode = previewOnly || isMobile;
 
   // Check if we're tracking special events (not just HALT)
   const hasSpecialEvents = enabledEvents.some(e => e !== EventType.HALT);
@@ -58,12 +76,12 @@ const MiniSim: React.FC<MiniSimProps> = ({
     initialSpeed,
   });
 
-  const SimContent = ({ expanded = false }: { expanded?: boolean }) => (
+  const SimContent = ({ expanded = false, compact = false }: { expanded?: boolean; compact?: boolean }) => (
     <div className={`bg-gray-900 border border-gray-700 rounded-lg overflow-hidden ${expanded ? 'h-full flex flex-col' : ''}`}>
       <div className={`flex flex-col md:flex-row ${expanded ? 'flex-1 min-h-0' : ''}`}>
         {/* Rules panel (optional) */}
         {showRules && (
-          <div className={`${expanded ? 'md:w-56' : 'md:w-44'} flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-800 p-2`}>
+          <div className={`${expanded ? 'md:w-56' : 'md:w-44'} flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-800 ${compact ? 'p-1.5' : 'p-2'}`}>
             <ProgramPanel
               program={sim.fractions}
               activeRuleIndex={sim.activeRuleIndex !== null ? sim.activeRuleIndex : sim.currentState.lastRuleIndex}
@@ -72,6 +90,7 @@ const MiniSim: React.FC<MiniSimProps> = ({
               scanningIndex={sim.scanningIndex}
               rulesTitle={rulesTitle}
               haltedMessage={haltedMessage}
+              compact={compact}
             />
           </div>
         )}
@@ -79,13 +98,13 @@ const MiniSim: React.FC<MiniSimProps> = ({
         {/* Main area */}
         <div className={`flex-1 flex flex-col min-w-0 ${expanded ? 'min-h-0' : ''}`}>
           {/* Header with value display and expand button */}
-          <div className="bg-gray-800/50 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
+          <div className={`bg-gray-800/50 border-b border-gray-700 flex items-center justify-between ${compact ? 'px-3 py-1.5' : 'px-4 py-2'}`}>
             <div className="flex-1 text-center">
-              <span className="text-2xl font-mono font-bold text-blue-400">
+              <span className={`font-mono font-bold text-blue-400 ${compact ? 'text-xl' : 'text-2xl'}`}>
                 {calculateValue(sim.currentState.registers).toString()}
               </span>
               <span className="text-gray-500 mx-2">=</span>
-              <span className="text-lg font-mono text-gray-400">
+              <span className={`font-mono text-gray-400 ${compact ? 'text-base' : 'text-lg'}`}>
                 {formatPrimeFactors(sim.currentState.registers) || '1'}
               </span>
             </div>
@@ -109,7 +128,7 @@ const MiniSim: React.FC<MiniSimProps> = ({
             )}
           </div>
 
-          <div className={`flex-1 p-3 ${expanded ? 'overflow-auto' : ''}`} style={{ minHeight: expanded ? undefined : '280px' }}>
+          <div className={`flex-1 ${compact ? 'p-1.5' : 'p-3'} ${expanded ? 'overflow-auto' : ''}`} style={{ minHeight: expanded ? undefined : '280px' }}>
             <RegisterBoard
               registers={sim.currentState.registers}
               phase={sim.phase}
@@ -120,6 +139,7 @@ const MiniSim: React.FC<MiniSimProps> = ({
               onEdit={sim.editRegister}
               title={registersTitle}
               description={description}
+              compact={compact}
             />
           </div>
 
@@ -168,17 +188,17 @@ const MiniSim: React.FC<MiniSimProps> = ({
 
   return (
     <>
-      {previewOnly ? <PreviewCard /> : <SimContent />}
+      {usePreviewMode ? <PreviewCard /> : <SimContent />}
       {isFullscreen && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 md:p-8"
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsFullscreen(false);
           }}
         >
-          <div className={`w-full h-[85vh] flex gap-4 ${hasSpecialEvents ? 'max-w-6xl' : 'max-w-5xl'}`}>
+          <div className={`w-full h-[95vh] md:h-[85vh] flex gap-4 ${hasSpecialEvents ? 'max-w-6xl' : 'max-w-5xl'}`}>
             <div className={hasSpecialEvents ? 'flex-1 min-w-0' : 'w-full'}>
-              <SimContent expanded />
+              <SimContent expanded compact={isMobile} />
             </div>
             {hasSpecialEvents && (
               <div className="w-64 flex-shrink-0">

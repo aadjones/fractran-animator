@@ -131,14 +131,14 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
     phase.type !== 'halted' && phase.type !== 'step_complete' && phase.ruleIndex > i;
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex">
-      {/* Fractions sidebar - vertically centered */}
-      <div className="bg-gray-800/50 px-5 py-6 flex items-center border-r border-gray-700/50">
+    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex flex-col md:flex-row">
+      {/* Fractions sidebar - horizontally on mobile, vertical on desktop */}
+      <div className="bg-gray-800/50 px-3 md:px-5 py-3 md:py-6 flex items-center justify-center md:justify-start border-b md:border-b-0 md:border-r border-gray-700/50">
         <div>
-          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-3">
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-2 md:mb-3 text-center md:text-left">
             Fractions
           </div>
-          <div className="flex flex-col space-y-2 font-mono text-lg">
+          <div className="flex flex-row md:flex-col gap-3 md:gap-0 md:space-y-2 font-mono text-base md:text-lg">
             {fractions.map((f, i) => (
               <div
                 key={i}
@@ -148,10 +148,10 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
                     : 'border-transparent text-gray-400'
                 }`}
               >
-                <span className="text-gray-600 w-6">{i + 1}.</span>
+                <span className="text-gray-600 w-5 md:w-6 text-sm md:text-base">{i + 1}.</span>
                 <span className={isActive(i) ? 'font-semibold' : ''}>{f.numerator}/{f.denominator}</span>
                 {isSkipped(i) && (
-                  <span className="ml-2 text-gray-600 text-sm">✗</span>
+                  <span className="ml-1.5 md:ml-2 text-gray-600 text-xs md:text-sm">✗</span>
                 )}
               </div>
             ))}
@@ -160,9 +160,9 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
       </div>
 
       {/* Main interaction area */}
-      <div className="p-4 flex-1">
+      <div className="p-3 md:p-4 flex-1">
         {/* History chain - prominent display */}
-        <div className="flex items-center justify-center flex-wrap gap-2 mb-6 py-3 bg-gray-800/50 rounded-lg font-mono text-2xl">
+        <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6 py-2 md:py-3 bg-gray-800/50 rounded-lg font-mono text-xl md:text-2xl">
           {history.map((n, i) => (
             <React.Fragment key={i}>
               <span className={i === history.length - 1 ? 'text-blue-400 font-bold' : 'text-gray-400'}>
@@ -181,11 +181,11 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
           )}
         </div>
 
-        <div className="text-center mb-4">
+        <div className="text-center mb-3 md:mb-4">
           <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-1">
             Current Number
           </div>
-          <div className="text-4xl font-mono font-bold text-blue-400">
+          <div className="text-3xl md:text-4xl font-mono font-bold text-blue-400">
             {phase.type === 'step_complete' ? phase.result : currentN}
           </div>
         </div>
@@ -193,19 +193,19 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Checking phase */}
         {phase.type === 'checking' && currentFraction && (
           <div className="text-center">
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-300 mb-3 md:mb-4 text-sm md:text-base">
               Is <span className="font-mono font-bold text-white">{currentN} × {currentFraction.numerator}/{currentFraction.denominator}</span> a whole number?
             </p>
-            <div className="flex justify-center space-x-3">
+            <div className="flex justify-center space-x-2 md:space-x-3">
               <button
                 onClick={() => handleYesNo(true)}
-                className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-md transition-colors"
+                className="px-4 md:px-6 py-1.5 md:py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
               >
                 Yes
               </button>
               <button
                 onClick={() => handleYesNo(false)}
-                className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-md transition-colors"
+                className="px-4 md:px-6 py-1.5 md:py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
               >
                 No
               </button>
@@ -216,18 +216,18 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Wrong answer feedback */}
         {phase.type === 'wrong_answer' && currentFraction && (
           <div className="text-center">
-            <p className="text-red-400 mb-2">
+            <p className="text-red-400 mb-2 text-sm md:text-base">
               Not quite. Let's check: {currentN} × {currentFraction.numerator} = {currentN * currentFraction.numerator},
               divided by {currentFraction.denominator} = {(currentN * currentFraction.numerator) / currentFraction.denominator}.
             </p>
-            <p className="text-gray-400 mb-4 text-sm">
+            <p className="text-gray-400 mb-3 md:mb-4 text-xs md:text-sm">
               {ruleApplies(phase.ruleIndex)
                 ? "That's a whole number, so this fraction does work."
                 : "That's not a whole number, so this fraction doesn't work."}
             </p>
             <button
               onClick={handleTryAgain}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+              className="px-3 md:px-4 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
             >
               Got it
             </button>
@@ -237,17 +237,17 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Correct "No" feedback - rule doesn't apply */}
         {phase.type === 'correct_no' && currentFraction && (
           <div className="text-center">
-            <p className="text-green-400 mb-2">
+            <p className="text-green-400 mb-2 text-sm md:text-base">
               Right! {currentN} × {currentFraction.numerator}/{currentFraction.denominator} = {phase.decimalResult}, not a whole number.
             </p>
-            <p className="text-gray-400 mb-4 text-sm">
+            <p className="text-gray-400 mb-3 md:mb-4 text-xs md:text-sm">
               {phase.ruleIndex + 1 < fractions.length
                 ? "So we try the next fraction."
                 : "No more fractions to try."}
             </p>
             <button
               onClick={handleNextRule}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+              className="px-3 md:px-4 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
             >
               {phase.ruleIndex + 1 < fractions.length ? "Next fraction" : "Continue"}
             </button>
@@ -257,8 +257,8 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Calculate phase */}
         {phase.type === 'calculate' && currentFraction && (
           <div className="text-center">
-            <p className="text-green-400 mb-2">Yes! Fraction {phase.ruleIndex + 1} works.</p>
-            <p className="text-gray-300 mb-4">
+            <p className="text-green-400 mb-2 text-sm md:text-base">Yes! Fraction {phase.ruleIndex + 1} works.</p>
+            <p className="text-gray-300 mb-3 md:mb-4 text-sm md:text-base">
               What is <span className="font-mono font-bold text-white">{currentN} × {currentFraction.numerator}/{currentFraction.denominator}</span>?
             </p>
             <form onSubmit={handleCalculationSubmit} className="flex justify-center items-center space-x-2">
@@ -266,12 +266,12 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
                 type="number"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                className="w-24 bg-gray-800 border border-gray-600 rounded px-3 py-2 font-mono text-lg text-white text-center focus:border-blue-500 outline-none"
+                className="w-20 md:w-24 bg-gray-800 border border-gray-600 rounded px-2 md:px-3 py-1.5 md:py-2 font-mono text-base md:text-lg text-white text-center focus:border-blue-500 outline-none"
                 autoFocus
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+                className="px-3 md:px-4 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
               >
                 Check
               </button>
@@ -282,15 +282,15 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Wrong calculation feedback */}
         {phase.type === 'wrong_calculation' && currentFraction && (
           <div className="text-center">
-            <p className="text-red-400 mb-2">
+            <p className="text-red-400 mb-2 text-sm md:text-base">
               {phase.userAnswer} isn't right. Try again!
             </p>
-            <p className="text-gray-500 text-sm mb-4">
+            <p className="text-gray-500 text-xs md:text-sm mb-3 md:mb-4">
               Hint: {currentN} × {currentFraction.numerator} = {currentN * currentFraction.numerator}, then divide by {currentFraction.denominator}.
             </p>
             <button
               onClick={handleTryAgain}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+              className="px-3 md:px-4 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
             >
               Try again
             </button>
@@ -300,15 +300,15 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Step complete - continue to next */}
         {phase.type === 'step_complete' && (
           <div className="text-center">
-            <p className="text-green-400 font-bold mb-2">
+            <p className="text-green-400 font-bold mb-2 text-sm md:text-base">
               Correct!
             </p>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">
               Now we start over from fraction 1.
             </p>
             <button
               onClick={handleContinue}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors"
+              className="px-3 md:px-4 py-1.5 md:py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-md transition-colors text-sm md:text-base"
             >
               Continue
             </button>
@@ -318,10 +318,10 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
         {/* Halted */}
         {phase.type === 'halted' && (
           <div className="text-center">
-            <p className="text-red-400 font-bold mb-2">
+            <p className="text-red-400 font-bold mb-2 text-sm md:text-base">
               No fraction works — the game stops!
             </p>
-            <div className="text-gray-400 text-sm mt-4">
+            <div className="text-gray-400 text-xs md:text-sm mt-3 md:mt-4">
               <p>Final sequence:</p>
               <p className="font-mono mt-1">
                 {history.join(' → ')}

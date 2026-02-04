@@ -12,39 +12,43 @@ interface RegisterBoardProps {
   onEdit: (prime: number, delta: number) => void;
   title?: string;
   description?: string;
+  /** Force compact mode (for mobile fullscreen) */
+  compact?: boolean;
 }
 
-const RegisterBoard: React.FC<RegisterBoardProps> = ({ 
-    registers, 
-    phase, 
-    activeRule, 
+const RegisterBoard: React.FC<RegisterBoardProps> = ({
+    registers,
+    phase,
+    activeRule,
     usedPrimes,
     editableRegisters,
     isSetupMode,
     onEdit,
     title,
-    description
+    description,
+    compact: forceCompact = false,
 }) => {
-  
+
   // Dynamic Sizing based on register count
   const count = usedPrimes.length;
   const isHighDensity = count > 8; // Prime Game typically
-  const isCompact = count >= 5 && !isHighDensity; // Fibonacci, multiplication
+  const isCompact = forceCompact || (count >= 5 && !isHighDensity); // Fibonacci, multiplication, or mobile
 
-  // Sizing variables
-  const containerWidth = isHighDensity 
-    ? "w-14 md:w-16" 
-    : isCompact 
-        ? "w-16 md:w-20" 
+  // Sizing variables - more compact when forceCompact is true
+  const containerWidth = isHighDensity
+    ? "w-14 md:w-16"
+    : isCompact
+        ? (forceCompact ? "w-14 md:w-20" : "w-16 md:w-20")
         : "w-20 md:w-24";
 
   // Height needs to be small enough so 2 rows fit on screen
+  // Even shorter when forceCompact is true (mobile fullscreen)
   const containerHeight = isHighDensity
     ? "h-24 md:h-28"
     : isCompact
-        ? "h-40 md:h-48"
-        : "h-56 md:h-64";
-  
+        ? (forceCompact ? "h-28 md:h-48" : "h-40 md:h-48")
+        : (forceCompact ? "h-36 md:h-64" : "h-56 md:h-64");
+
   const beadSize = isHighDensity
     ? "w-1.5 h-1.5 md:w-2 md:h-2"
     : isCompact
@@ -57,13 +61,13 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
         ? "text-base md:text-lg"
         : "text-xl md:text-2xl";
 
-  const gapSize = isHighDensity ? "gap-1.5 md:gap-2" : "gap-3 md:gap-4";
+  const gapSize = isHighDensity ? "gap-1.5 md:gap-2" : (forceCompact ? "gap-2 md:gap-4" : "gap-3 md:gap-4");
 
   return (
     <div className="w-full h-full bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex flex-col shadow-inner relative">
-      
+
       {/* Top Info Bar */}
-      <div className="bg-gray-800 px-3 py-2 border-b border-gray-700 flex justify-between items-center z-20 shadow-md flex-shrink-0">
+      <div className={`bg-gray-800 border-b border-gray-700 flex justify-between items-center z-20 shadow-md flex-shrink-0 ${forceCompact ? 'px-2 py-1' : 'px-3 py-2'}`}>
         <h2 className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{title || "Prime Registers"}</h2>
         <div className="flex items-center space-x-2 md:space-x-4 text-[10px] md:text-xs">
              <div className="flex items-center space-x-1">
@@ -77,11 +81,11 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
         </div>
       </div>
       
-      {/* Content Area - Auto Scroll (Vertical) */}
-      <div className="flex-1 overflow-y-auto p-2 md:p-4 custom-scrollbar flex flex-col justify-center">
-        
-        {/* Goal / Description Banner */}
-        {description && (
+      {/* Content Area - Auto Scroll (Vertical + Horizontal on mobile) */}
+      <div className={`flex-1 overflow-y-auto overflow-x-auto custom-scrollbar flex flex-col justify-center ${forceCompact ? 'p-1' : 'p-2 md:p-4'}`}>
+
+        {/* Goal / Description Banner - hidden in compact mode to save space */}
+        {description && !forceCompact && (
           <div className="mb-4 flex-shrink-0 max-w-4xl mx-auto w-full">
             <div className="bg-gray-800/40 border border-gray-700/50 rounded-lg p-2 md:p-3 flex items-start space-x-2 backdrop-blur-sm shadow-sm">
                <div className="bg-blue-900/30 p-1 rounded-full text-blue-400 flex-shrink-0">

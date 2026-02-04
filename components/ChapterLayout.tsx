@@ -31,7 +31,8 @@ const ChapterLayout: React.FC<ChapterLayoutProps> = ({ chapterNum, children, onN
           <span className="text-sm font-medium hidden sm:inline">Chapters</span>
         </button>
 
-        <div className="flex items-center space-x-1 text-xs text-gray-500 font-mono">
+        {/* Chapter dots - hidden on very small screens, shown from sm+ */}
+        <div className="hidden sm:flex items-center space-x-1 text-xs text-gray-500 font-mono">
           {CHAPTERS.map((_, i) => (
             <button
               key={i}
@@ -45,6 +46,10 @@ const ChapterLayout: React.FC<ChapterLayoutProps> = ({ chapterNum, children, onN
               {i + 1}
             </button>
           ))}
+        </div>
+        {/* Compact chapter indicator on very small screens */}
+        <div className="sm:hidden text-xs text-gray-500 font-mono">
+          {chapterNum} / {CHAPTERS.length}
         </div>
 
         <div className="w-20" /> {/* Spacer for balance */}

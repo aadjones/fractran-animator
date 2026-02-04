@@ -9,19 +9,23 @@ interface ProgramPanelProps {
   scanningIndex?: number | null;
   rulesTitle?: string;
   haltedMessage?: string;
+  /** Force compact mode (for mobile) */
+  compact?: boolean;
 }
 
 const ProgramPanel: React.FC<ProgramPanelProps> = ({
   program, activeRuleIndex, phase, halted, scanningIndex,
   rulesTitle = "Program Rules",
   haltedMessage = "Program Halted",
+  compact: forceCompact = false,
 }) => {
   const activeRef = useRef<HTMLDivElement>(null);
   const scanRef = useRef<HTMLDivElement>(null);
-  
+
   // Auto-compact if there are many rules to avoid scrolling
   // Prime game has 14 rules, so we need an ultra-compact mode
-  const isCompact = program.length > 6;
+  // Also compact if forced (mobile)
+  const isCompact = forceCompact || program.length > 6;
   const isUltraCompact = program.length > 10;
 
   useEffect(() => {

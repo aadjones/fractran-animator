@@ -99,14 +99,14 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   const lastAppliedRule = steps.length > 1 ? steps[steps.length - 1].ruleApplied : null;
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex">
-      {/* Fractions sidebar - vertically centered */}
-      <div className="bg-gray-800/50 px-5 py-6 flex items-center border-r border-gray-700/50">
+    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex flex-col md:flex-row">
+      {/* Fractions sidebar - horizontally on mobile, vertical on desktop */}
+      <div className="bg-gray-800/50 px-3 md:px-5 py-3 md:py-6 flex items-center justify-center md:justify-start border-b md:border-b-0 md:border-r border-gray-700/50">
         <div>
-          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-3">
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-2 md:mb-3 text-center md:text-left">
             Fractions
           </div>
-          <div className="flex flex-col space-y-2 font-mono text-lg">
+          <div className="flex flex-row md:flex-col gap-3 md:gap-0 md:space-y-2 font-mono text-base md:text-lg">
             {fractions.map((f, i) => (
               <div
                 key={i}
@@ -116,7 +116,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
                     : 'border-transparent text-gray-400'
                 }`}
               >
-                <span className="text-gray-600 w-6">{i + 1}.</span>
+                <span className="text-gray-600 w-5 md:w-6 text-sm md:text-base">{i + 1}.</span>
                 <span className={lastAppliedRule === i ? 'font-semibold' : ''}>{f.numerator}/{f.denominator}</span>
               </div>
             ))}
@@ -125,39 +125,39 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
       </div>
 
       {/* Number sequence */}
-      <div className="p-4 flex-1">
+      <div className="p-3 md:p-4 flex-1">
         {/* Current value */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-3 md:mb-4">
           <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-1">Current Number</div>
-          <div className="text-4xl md:text-5xl font-mono font-bold text-blue-400">
+          <div className="text-3xl md:text-5xl font-mono font-bold text-blue-400">
             {steps[steps.length - 1].n}
           </div>
           {showPrimeFactors && (
-            <div className="text-lg font-mono text-gray-400 mt-1">
+            <div className="text-base md:text-lg font-mono text-gray-400 mt-1">
               {formatPrimeFactors(steps[steps.length - 1].registers)}
             </div>
           )}
           {halted && (
-            <div className="text-red-400 text-xs font-bold uppercase tracking-wider mt-2">
+            <div className="text-red-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mt-2">
               No fraction applies — stopped!
             </div>
           )}
         </div>
 
         {/* Sequence trail - prominent display */}
-        <div ref={scrollRef} className="flex items-center justify-center flex-wrap gap-x-2 gap-y-1 overflow-x-auto py-3 px-4 mb-4 bg-gray-800/50 rounded-lg">
+        <div ref={scrollRef} className="flex items-center justify-center flex-wrap gap-x-1.5 md:gap-x-2 gap-y-1 overflow-x-auto py-2 md:py-3 px-3 md:px-4 mb-3 md:mb-4 bg-gray-800/50 rounded-lg">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
               {i > 0 && s.ruleApplied !== null && (
                 <span className="flex flex-col items-center flex-shrink-0">
-                  <span className="text-[10px] text-gray-500 font-mono leading-none whitespace-nowrap">
+                  <span className="text-[8px] md:text-[10px] text-gray-500 font-mono leading-none whitespace-nowrap">
                     ×{fractions[s.ruleApplied].numerator}/{fractions[s.ruleApplied].denominator}
                   </span>
-                  <span className="text-gray-600 text-xl">→</span>
+                  <span className="text-gray-600 text-base md:text-xl">→</span>
                 </span>
               )}
               <span
-                className={`font-mono text-xl flex-shrink-0 px-2 py-1 rounded ${
+                className={`font-mono text-base md:text-xl flex-shrink-0 px-1.5 md:px-2 py-0.5 md:py-1 rounded ${
                   i === steps.length - 1
                     ? 'bg-blue-900/40 text-blue-300 font-bold'
                     : 'text-gray-400'
@@ -169,50 +169,52 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
           ))}
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+        {/* Controls - stack on mobile for breathing room */}
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center justify-center md:justify-start space-x-2">
             <button
               onClick={handleReset}
-              className="p-2 bg-gray-700 hover:bg-gray-600 rounded-md text-gray-200 transition-colors"
+              className="p-1.5 md:p-2 bg-gray-700 hover:bg-gray-600 rounded-md text-gray-200 transition-colors"
               title="Reset"
             >
-              <RotateCcw size={16} />
+              <RotateCcw size={14} />
             </button>
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               disabled={halted}
-              className={`flex items-center px-3 py-2 rounded-md font-bold text-white transition-all text-sm ${
+              className={`flex items-center px-2.5 py-1.5 md:px-3 md:py-2 rounded-md font-bold text-white transition-all text-xs md:text-sm ${
                 isPlaying ? 'bg-amber-600 hover:bg-amber-500' : 'bg-green-600 hover:bg-green-500'
               } disabled:opacity-50`}
             >
-              {isPlaying ? <><Pause size={14} className="mr-1" /> Pause</> : <><Play size={14} className="mr-1" /> Play</>}
+              {isPlaying ? <><Pause size={12} className="mr-1" /> Pause</> : <><Play size={12} className="mr-1" /> Play</>}
             </button>
             <button
               onClick={doStep}
               disabled={halted || isPlaying}
-              className="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-md text-white transition-colors"
+              className="p-1.5 md:p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-md text-white transition-colors"
               title="Step"
             >
-              <ArrowRight size={16} />
+              <ArrowRight size={14} />
             </button>
           </div>
 
-          {editableStart && (
-            <div className="flex items-center space-x-2">
-              <label className="text-xs text-gray-500 font-bold">Start:</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={inputValue}
-                onChange={(e) => handleInputChange(e.target.value)}
-                className="w-20 bg-gray-800 border border-gray-700 rounded px-2 py-1 font-mono text-sm text-gray-200 focus:border-blue-500 outline-none"
-              />
-            </div>
-          )}
+          <div className="flex items-center justify-center md:justify-end gap-3">
+            {editableStart && (
+              <div className="flex items-center space-x-1.5">
+                <label className="text-[10px] md:text-xs text-gray-500 font-bold">Start:</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={inputValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  className="w-16 md:w-20 bg-gray-800 border border-gray-700 rounded px-1.5 py-0.5 md:px-2 md:py-1 font-mono text-xs md:text-sm text-gray-200 focus:border-blue-500 outline-none"
+                />
+              </div>
+            )}
 
-          <div className="text-xs text-gray-500 font-mono">
-            Step {steps.length - 1}
+            <div className="text-[10px] md:text-xs text-gray-500 font-mono">
+              Step {steps.length - 1}
+            </div>
           </div>
         </div>
       </div>

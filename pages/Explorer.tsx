@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { P, H3, Callout, Spacer } from "../components/Prose";
 import MiniSim from "../components/widgets/MiniSim";
+import DesktopRecommendedBanner from "../components/DesktopRecommendedBanner";
 import { EventType } from "../types";
 
 interface ExplorerProps {
@@ -25,6 +26,8 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
         </div>
         <div className="w-20" />
       </header>
+
+      <DesktopRecommendedBanner storageKey="explorer-desktop-banner" />
 
       {/* Title */}
       <div className="border-b border-gray-800/50 bg-gray-900/30 px-6 py-8 md:py-12">

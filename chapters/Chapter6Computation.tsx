@@ -1,5 +1,5 @@
 import React from "react";
-import { P, H3, Callout, Spacer, WidgetContainer } from "../components/Prose";
+import { P, H3, Callout, Spacer, WidgetContainer, Spoiler } from "../components/Prose";
 import MiniSim from "../components/widgets/MiniSim";
 import ProgramBuilder from "../components/widgets/ProgramBuilder";
 
@@ -41,6 +41,15 @@ const Chapter6Computation: React.FC = () => {
           goalDescription="Double the count from column 2"
         />
       </WidgetContainer>
+
+      <Spoiler label="See solution">
+        <ol className="list-decimal list-inside space-y-1 font-mono">
+          <li>9/2</li>
+        </ol>
+        <p className="text-gray-400 text-sm mt-2">
+          Each time 9/2 applies, it takes one dot from column 2 and adds two to column 3 (since 9 = 3²).
+        </p>
+      </Spoiler>
 
       <Spacer />
 

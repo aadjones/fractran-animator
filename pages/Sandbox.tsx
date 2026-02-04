@@ -7,6 +7,7 @@ import RegisterBoard from '../components/RegisterBoard';
 import ProgramPanel from '../components/ProgramPanel';
 import Controls from '../components/Controls';
 import { ArrowLeft, Plus, X, RotateCcw } from 'lucide-react';
+import DesktopRecommendedBanner from '../components/DesktopRecommendedBanner';
 
 interface SandboxProps {
   onNavigate: (hash: string) => void;
@@ -104,6 +105,8 @@ const Sandbox: React.FC<SandboxProps> = ({ onNavigate }) => {
           <span className="text-sm font-medium hidden sm:inline">Reset All</span>
         </button>
       </header>
+
+      <DesktopRecommendedBanner storageKey="sandbox-desktop-banner" />
 
       <div className="flex flex-col lg:flex-row">
         {/* Left: Fraction Editor */}
