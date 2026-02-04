@@ -64,7 +64,7 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
       
       {/* Top Info Bar */}
       <div className="bg-gray-800 px-3 py-2 border-b border-gray-700 flex justify-between items-center z-20 shadow-md flex-shrink-0">
-        <h2 className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Prime Registers</h2>
+        <h2 className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{title || "Prime Registers"}</h2>
         <div className="flex items-center space-x-2 md:space-x-4 text-[10px] md:text-xs">
              <div className="flex items-center space-x-1">
                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.5)]"></div>

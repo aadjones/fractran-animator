@@ -35,6 +35,8 @@ interface MiniSimProps {
   description?: string;
   showRules?: boolean;
   initialSpeed?: number;
+  /** Use game terminology instead of programming terminology */
+  gameMode?: boolean;
 }
 
 const MiniSim: React.FC<MiniSimProps> = ({
@@ -45,7 +47,12 @@ const MiniSim: React.FC<MiniSimProps> = ({
   description,
   showRules = true,
   initialSpeed = 10,
+  gameMode = false,
 }) => {
+  // Labels change based on gameMode
+  const rulesTitle = gameMode ? "Game Rules" : "Program Rules";
+  const haltedMessage = gameMode ? "Game Ended" : "Program Halted";
+  const registersTitle = gameMode ? "Prime Columns" : "Prime Registers";
   const sim = useFractranSim({
     program,
     initialRegisters,
@@ -66,6 +73,8 @@ const MiniSim: React.FC<MiniSimProps> = ({
               phase={sim.phase}
               halted={sim.currentState.halted}
               scanningIndex={sim.scanningIndex}
+              rulesTitle={rulesTitle}
+              haltedMessage={haltedMessage}
             />
           </div>
         )}
@@ -92,6 +101,7 @@ const MiniSim: React.FC<MiniSimProps> = ({
               editableRegisters={sim.editableRegisters}
               isSetupMode={sim.currentState.step === 0}
               onEdit={sim.editRegister}
+              title={registersTitle}
               description={description}
             />
           </div>

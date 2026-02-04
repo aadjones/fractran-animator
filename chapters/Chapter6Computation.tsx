@@ -1,20 +1,12 @@
 import React from "react";
-import {
-  P,
-  H3,
-  Callout,
-  Spacer,
-  WidgetContainer,
-} from "../components/Prose";
+import { P, H3, Callout, Spacer, WidgetContainer } from "../components/Prose";
 import MiniSim from "../components/widgets/MiniSim";
 import ProgramBuilder from "../components/widgets/ProgramBuilder";
 
 const Chapter6Computation: React.FC = () => {
   return (
     <>
-      <P>
-        Look at this program again. It's from Chapter 1.
-      </P>
+      <P>Look at this program again. It's from Chapter 1.</P>
 
       <WidgetContainer label="The original game">
         <MiniSim
@@ -25,16 +17,12 @@ const Chapter6Computation: React.FC = () => {
         />
       </WidgetContainer>
 
-      <P>
-        Put 3 in column 2. Put 4 in column 3. Run it.
-      </P>
+      <P>Put 3 in column 2. Put 4 in column 3. Run it.</P>
 
-      <P>
-        How many dots end up in column 5?
-      </P>
+      <P>How many dots end up in column 5?</P>
 
       <Callout>
-        This program computes addition.
+        This 'game' is actually a computation: it computes addition!
       </Callout>
 
       <Spacer />
@@ -42,8 +30,8 @@ const Chapter6Computation: React.FC = () => {
       <H3>Try this</H3>
 
       <P>
-        Can you write a single fraction that doubles the count in column 2?
-        (The result can end up in a different column.)
+        Can you write a single fraction that doubles the count in column 2? (The
+        result can end up in a different column.)
       </P>
 
       <WidgetContainer label="Doubling">
@@ -64,12 +52,13 @@ const Chapter6Computation: React.FC = () => {
       </P>
 
       <P>
-        The columns are memory. The fractions are instructions.
-        It's one of the simplest programming languages ever designed.
+        The columns are memory. The fractions are instructions. It's one of the
+        simplest programming languages ever designed.
       </P>
 
       <Callout>
-        A list of fractions. A starting number. That's it. That's the whole language.
+        A list of fractions. A starting number. That's it. That's the whole
+        language.
       </Callout>
 
       <Spacer />

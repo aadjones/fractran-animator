@@ -15,20 +15,16 @@ const Chapter1Intro: React.FC = () => {
         Go through the fractions in order. Multiply your number by the first
         fraction that gives you a whole number. That's your new number. Repeat.
       </P>
-
-      <Callout>
-        That's it. That's the whole game.
-      </Callout>
-
-      <P>Let's try it. We'll start with <strong>6</strong> and these two fractions:</P>
+      <P>
+        Let's try it. We'll start with <strong>6</strong> and these two
+        fractions:
+      </P>
 
       <WidgetContainer label="Your turn">
         <ManualStepWidget fractions={["3/2", "5/3"]} startingNumber={6} />
       </WidgetContainer>
 
-      <P>
-        That was a bit tedious. Let's have the computer do the arithmetic:
-      </P>
+      <P>That was a bit tedious. Let's have the computer do the arithmetic:</P>
 
       <WidgetContainer label="Automated">
         <NumberGameWidget program={["3/2", "5/3"]} initialN={6} />

@@ -7,10 +7,14 @@ interface ProgramPanelProps {
   phase: AnimationPhase;
   halted: boolean;
   scanningIndex?: number | null;
+  rulesTitle?: string;
+  haltedMessage?: string;
 }
 
-const ProgramPanel: React.FC<ProgramPanelProps> = ({ 
-  program, activeRuleIndex, phase, halted, scanningIndex 
+const ProgramPanel: React.FC<ProgramPanelProps> = ({
+  program, activeRuleIndex, phase, halted, scanningIndex,
+  rulesTitle = "Program Rules",
+  haltedMessage = "Program Halted",
 }) => {
   const activeRef = useRef<HTMLDivElement>(null);
   const scanRef = useRef<HTMLDivElement>(null);
@@ -32,7 +36,7 @@ const ProgramPanel: React.FC<ProgramPanelProps> = ({
   return (
     <div className="flex flex-col h-full bg-gray-900 border border-gray-700 rounded-lg overflow-hidden shadow-inner">
       <div className={`bg-gray-800 border-b border-gray-700 ${isUltraCompact ? 'px-3 py-2' : 'px-4 py-3'}`}>
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Program Rules</h2>
+        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{rulesTitle}</h2>
       </div>
       
       <div className={`flex-1 overflow-y-auto custom-scrollbar ${isUltraCompact ? 'p-1 space-y-0.5' : 'p-2 space-y-2'}`}>
@@ -105,7 +109,7 @@ const ProgramPanel: React.FC<ProgramPanelProps> = ({
            <div className={`text-center text-red-400 font-bold border border-red-900/50 bg-red-900/20 rounded-lg animate-fade-in uppercase tracking-widest
              ${isUltraCompact ? 'p-1.5 mt-2 text-xs' : 'p-3 mt-4 text-sm'}
            `}>
-             Program Halted
+             {haltedMessage}
            </div>
         )}
       </div>
