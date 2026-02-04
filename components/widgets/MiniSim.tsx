@@ -7,6 +7,7 @@ import { calculateValue } from '../../services/fractranLogic';
 import RegisterBoard from '../RegisterBoard';
 import ProgramPanel from '../ProgramPanel';
 import Controls from '../Controls';
+import EventLog from '../EventLog';
 
 // Format PrimeMap as "2³ × 3²"
 function formatPrimeFactors(regs: PrimeMap): string {
@@ -61,6 +62,9 @@ const MiniSim: React.FC<MiniSimProps> = ({
   title,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Check if we're tracking special events (not just HALT)
+  const hasSpecialEvents = enabledEvents.some(e => e !== EventType.HALT);
 
   // Labels change based on gameMode
   const rulesTitle = gameMode ? "Game Rules" : "Program Rules";
@@ -192,8 +196,15 @@ const MiniSim: React.FC<MiniSimProps> = ({
             if (e.target === e.currentTarget) setIsFullscreen(false);
           }}
         >
-          <div className="w-full max-w-5xl h-[85vh]">
-            <SimContent expanded />
+          <div className={`w-full h-[85vh] flex gap-4 ${hasSpecialEvents ? 'max-w-6xl' : 'max-w-5xl'}`}>
+            <div className={hasSpecialEvents ? 'flex-1 min-w-0' : 'w-full'}>
+              <SimContent expanded />
+            </div>
+            {hasSpecialEvents && (
+              <div className="w-64 flex-shrink-0">
+                <EventLog events={sim.events} />
+              </div>
+            )}
           </div>
         </div>,
         document.body
