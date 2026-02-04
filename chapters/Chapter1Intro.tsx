@@ -16,8 +16,8 @@ const Chapter1Intro: React.FC = () => {
         fraction that gives you a whole number. That's your new number. Repeat.
       </P>
       <P>
-        Let's try it. We'll start with <strong>6</strong> and these two
-        fractions:
+        Let's try it. We'll start with <strong>6</strong> and the two fractions{" "}
+        <strong>3/2</strong> and <strong>5/3</strong>.
       </P>
 
       <WidgetContainer label="Your turn">

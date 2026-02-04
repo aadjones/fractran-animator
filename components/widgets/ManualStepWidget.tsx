@@ -125,35 +125,42 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
     ? fractions[phase.ruleIndex]
     : null;
 
+  const isActive = (i: number) =>
+    phase.type !== 'halted' && phase.type !== 'step_complete' && phase.ruleIndex === i;
+  const isSkipped = (i: number) =>
+    phase.type !== 'halted' && phase.type !== 'step_complete' && phase.ruleIndex > i;
+
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-      {/* Fractions display */}
-      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
-        <div className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">
-          Fractions:
-        </div>
-        <div className="flex flex-col space-y-1 font-mono text-sm">
-          {fractions.map((f, i) => (
-            <div
-              key={i}
-              className={`flex items-center ${
-                phase.type !== 'halted' && phase.type !== 'step_complete' && phase.ruleIndex === i
-                  ? 'text-blue-400'
-                  : 'text-gray-400'
-              }`}
-            >
-              <span className="text-gray-600 w-5">{i + 1}.</span>
-              <span>{f.numerator}/{f.denominator}</span>
-              {phase.type !== 'halted' && phase.type !== 'step_complete' && phase.ruleIndex > i && (
-                <span className="ml-2 text-gray-600 text-xs">✗</span>
-              )}
-            </div>
-          ))}
+    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex">
+      {/* Fractions sidebar - vertically centered */}
+      <div className="bg-gray-800/50 px-5 py-6 flex items-center border-r border-gray-700/50">
+        <div>
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-3">
+            Fractions
+          </div>
+          <div className="flex flex-col space-y-2 font-mono text-lg">
+            {fractions.map((f, i) => (
+              <div
+                key={i}
+                className={`flex items-center pl-2 border-l-2 transition-colors ${
+                  isActive(i)
+                    ? 'border-blue-400 text-blue-400'
+                    : 'border-transparent text-gray-400'
+                }`}
+              >
+                <span className="text-gray-600 w-6">{i + 1}.</span>
+                <span className={isActive(i) ? 'font-semibold' : ''}>{f.numerator}/{f.denominator}</span>
+                {isSkipped(i) && (
+                  <span className="ml-2 text-gray-600 text-sm">✗</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Main interaction area */}
-      <div className="p-4">
+      <div className="p-4 flex-1">
         {/* History chain - prominent display */}
         <div className="flex items-center justify-center flex-wrap gap-2 mb-6 py-3 bg-gray-800/50 rounded-lg font-mono text-2xl">
           {history.map((n, i) => (

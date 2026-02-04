@@ -28,6 +28,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   const fractions = React.useMemo(() => parseProgram(program), [program]);
 
   const [startN, setStartN] = useState(initialN);
+  const [inputValue, setInputValue] = useState(String(initialN));
   const [steps, setSteps] = useState<NumberStep[]>(() => [{
     n: String(initialN),
     ruleApplied: null,
@@ -84,9 +85,10 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
     setSteps([{ n: String(startN), ruleApplied: null, registers: regs }]);
   };
 
-  const handleStartNChange = (val: number) => {
-    if (val < 1) val = 1;
-    if (val > 999999) val = 999999;
+  const handleInputChange = (raw: string) => {
+    setInputValue(raw);
+    const val = raw === '' ? 0 : parseInt(raw, 10);
+    if (!Number.isFinite(val) || val < 0) return;
     setStartN(val);
     setIsPlaying(false);
     setHalted(false);
@@ -94,32 +96,36 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
     setSteps([{ n: String(val), ruleApplied: null, registers: regs }]);
   };
 
+  const lastAppliedRule = steps.length > 1 ? steps[steps.length - 1].ruleApplied : null;
+
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-      {/* Fractions display */}
-      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
-        <div className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-2">
-          Fractions:
-        </div>
-        <div className="flex flex-col space-y-1 font-mono text-sm">
-          {fractions.map((f, i) => (
-            <div
-              key={i}
-              className={`flex items-center ${
-                steps.length > 1 && steps[steps.length - 1].ruleApplied === i
-                  ? 'text-blue-400'
-                  : 'text-gray-400'
-              }`}
-            >
-              <span className="text-gray-600 w-5">{i + 1}.</span>
-              <span>{f.numerator}/{f.denominator}</span>
-            </div>
-          ))}
+    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex">
+      {/* Fractions sidebar - vertically centered */}
+      <div className="bg-gray-800/50 px-5 py-6 flex items-center border-r border-gray-700/50">
+        <div>
+          <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-3">
+            Fractions
+          </div>
+          <div className="flex flex-col space-y-2 font-mono text-lg">
+            {fractions.map((f, i) => (
+              <div
+                key={i}
+                className={`flex items-center pl-2 border-l-2 transition-colors ${
+                  lastAppliedRule === i
+                    ? 'border-blue-400 text-blue-400'
+                    : 'border-transparent text-gray-400'
+                }`}
+              >
+                <span className="text-gray-600 w-6">{i + 1}.</span>
+                <span className={lastAppliedRule === i ? 'font-semibold' : ''}>{f.numerator}/{f.denominator}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Number sequence */}
-      <div className="p-4">
+      <div className="p-4 flex-1">
         {/* Current value */}
         <div className="text-center mb-4">
           <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-1">Current Number</div>
@@ -196,11 +202,11 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
             <div className="flex items-center space-x-2">
               <label className="text-xs text-gray-500 font-bold">Start:</label>
               <input
-                type="number"
-                value={startN}
-                onChange={(e) => handleStartNChange(Number(e.target.value))}
+                type="text"
+                inputMode="numeric"
+                value={inputValue}
+                onChange={(e) => handleInputChange(e.target.value)}
                 className="w-20 bg-gray-800 border border-gray-700 rounded px-2 py-1 font-mono text-sm text-gray-200 focus:border-blue-500 outline-none"
-                min={1}
               />
             </div>
           )}

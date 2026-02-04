@@ -31,8 +31,8 @@ const Chapter7Fork: React.FC = () => {
             <h3 className="text-xl font-bold text-gray-100">More Puzzles</h3>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Subtraction, comparison, swapping — build more programs and deepen
-            your understanding.
+            Subtraction, comparison — build more programs and deepen your
+            understanding.
           </p>
         </button>
 

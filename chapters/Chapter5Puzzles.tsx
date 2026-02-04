@@ -1,19 +1,11 @@
 import React from "react";
-import {
-  P,
-  H3,
-  Spacer,
-  WidgetContainer,
-  Spoiler,
-} from "../components/Prose";
+import { P, H3, Spacer, WidgetContainer, Spoiler } from "../components/Prose";
 import ProgramBuilder from "../components/widgets/ProgramBuilder";
 
 const Chapter5Puzzles: React.FC = () => {
   return (
     <>
-      <P>
-        Now you know how this works. Time to design your own.
-      </P>
+      <P>Now you know how this works. Time to design your own.</P>
 
       <H3>Puzzle 1: Move everything from 2 to 3</H3>
 
@@ -31,7 +23,9 @@ const Chapter5Puzzles: React.FC = () => {
       </WidgetContainer>
 
       <Spoiler label="See solution">
-        <p className="font-mono">3/2</p>
+        <ol className="list-decimal list-inside space-y-1 font-mono">
+          <li>3/2</li>
+        </ol>
       </Spoiler>
 
       <Spacer />
@@ -76,7 +70,9 @@ const Chapter5Puzzles: React.FC = () => {
       </WidgetContainer>
 
       <Spoiler label="See solution">
-        <p className="font-mono">5/6</p>
+        <ol className="list-decimal list-inside space-y-1 font-mono">
+          <li>5/6</li>
+        </ol>
       </Spoiler>
 
       <Spacer />

@@ -117,8 +117,8 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
         <P>This is the most famous FRACTRAN program.</P>
 
         <Callout>
-          Start with 2. The sequence of powers of 2 that appear (2¹, 2², 2³,
-          2⁵, 2⁷, 2¹¹...) have exponents that are exactly the prime numbers!
+          Start with 2. The sequence of powers of 2 that appear (2¹, 2², 2³, 2⁵,
+          2⁷, 2¹¹...) have exponents that are exactly the prime numbers!
         </Callout>
 
         <MiniSim
@@ -194,12 +194,12 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
 
         <div className="text-center text-gray-500 text-sm">
           <a
-            href="https://en.wikipedia.org/wiki/FRACTRAN"
+            href="https://www.cs.unc.edu/~stotts/COMP210-s23/madMath/Conway87.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
           >
-            Learn more about FRACTRAN on Wikipedia
+            Learn more about FRACTRAN from Conway's original article
             <ExternalLink size={12} />
           </a>
         </div>

@@ -31,16 +31,6 @@ export interface SimulationEvent {
   data?: any;
 }
 
-export interface Preset {
-  name: string;
-  description: string;
-  fractions: string[]; // Strings like "17/91"
-  initialState: PrimeMap; // e.g. {2: 1} for input 2
-  editableRegisters: number[]; // Primes that the user can add/remove beads from
-  defaultEvents: EventType[];
-  notes?: string;
-}
-
 export type AnimationPhase = 'idle' | 'scanning' | 'selecting' | 'consuming' | 'producing';
 
 export interface ChapterMeta {
