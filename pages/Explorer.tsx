@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { P, H3, Callout, Spacer, WidgetContainer } from "../components/Prose";
+import { P, H3, Callout, Spacer } from "../components/Prose";
 import MiniSim from "../components/widgets/MiniSim";
 import { EventType } from "../types";
 
@@ -59,21 +59,20 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
           and the result appears in column 5.
         </P>
 
-        <WidgetContainer label="A × B">
-          <MiniSim
-            program={["455/33", "11/13", "1/11", "3/7", "11/2", "1/3"]}
-            initialRegisters={{ 2: 3, 3: 4 }}
-            editableRegisters={[2, 3]}
-            showRules={true}
-            description="Computes 2×3 register values → result in column 5"
-            allowFullscreen
-          />
-        </WidgetContainer>
+        <MiniSim
+          program={["455/33", "11/13", "1/11", "3/7", "11/2", "1/3"]}
+          initialRegisters={{ 2: 3, 3: 4 }}
+          editableRegisters={[2, 3]}
+          showRules={true}
+          description="Computes column 2 × column 3 → result in column 5"
+          previewOnly
+          title="A × B"
+        />
 
         <P>
-          Try 2 × 3. The result (6 dots in column 5) might take a while to
-          appear — multiplication requires looping through addition multiple
-          times.
+          Put values in columns 2 and 3, run the program, and watch the result
+          appear in column 5. Multiplication requires many steps — it loops
+          through addition repeatedly.
         </P>
 
         <Spacer />
@@ -85,26 +84,25 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
           and 3 — they hold consecutive Fibonacci numbers.
         </P>
 
-        <WidgetContainer label="0, 1, 1, 2, 3, 5, 8, 13...">
-          <MiniSim
-            program={[
-              "39/55",
-              "33/65",
-              "78/77",
-              "66/91",
-              "1/11",
-              "1/13",
-              "5/2",
-              "7/3",
-              "11/1",
-            ]}
-            initialRegisters={{ 3: 1 }}
-            showRules={true}
-            enabledEvents={[EventType.FIBONACCI_PAIR]}
-            description="Columns 2 & 3 cycle through Fibonacci pairs"
-            allowFullscreen
-          />
-        </WidgetContainer>
+        <MiniSim
+          program={[
+            "39/55",
+            "33/65",
+            "78/77",
+            "66/91",
+            "1/11",
+            "1/13",
+            "5/2",
+            "7/3",
+            "11/1",
+          ]}
+          initialRegisters={{ 3: 1 }}
+          showRules={true}
+          enabledEvents={[EventType.FIBONACCI_PAIR]}
+          description="Columns 2 & 3 cycle through Fibonacci pairs"
+          previewOnly
+          title="Fibonacci Generator"
+        />
 
         <P>
           The program loops forever. Each time columns 2 and 3 are the only
@@ -123,31 +121,30 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
           2⁵, 2⁷, 2¹¹...) have exponents that are exactly the prime numbers!
         </Callout>
 
-        <WidgetContainer label="Prime generator">
-          <MiniSim
-            program={[
-              "17/91",
-              "78/85",
-              "19/51",
-              "23/38",
-              "29/33",
-              "77/29",
-              "95/23",
-              "77/19",
-              "1/17",
-              "11/13",
-              "13/11",
-              "15/2",
-              "1/7",
-              "55/1",
-            ]}
-            initialRegisters={{ 2: 1 }}
-            showRules={true}
-            enabledEvents={[EventType.POWER_OF_TWO]}
-            description="Watch for moments when only column 2 has dots"
-            allowFullscreen
-          />
-        </WidgetContainer>
+        <MiniSim
+          program={[
+            "17/91",
+            "78/85",
+            "19/51",
+            "23/38",
+            "29/33",
+            "77/29",
+            "95/23",
+            "77/19",
+            "1/17",
+            "11/13",
+            "13/11",
+            "15/2",
+            "1/7",
+            "55/1",
+          ]}
+          initialRegisters={{ 2: 1 }}
+          showRules={true}
+          enabledEvents={[EventType.POWER_OF_TWO]}
+          description="Watch for moments when only column 2 has dots"
+          previewOnly
+          title="Conway's PRIMEGAME"
+        />
 
         <P>
           This takes many steps between primes. Speed it up and watch column 2.

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Maximize2, X } from 'lucide-react';
+import { Maximize2, X, Play } from 'lucide-react';
 import { PrimeMap, EventType } from '../../types';
 import { useFractranSim } from '../../hooks/useFractranSim';
 import { calculateValue } from '../../services/fractranLogic';
@@ -41,6 +41,10 @@ interface MiniSimProps {
   gameMode?: boolean;
   /** Allow expanding to fullscreen mode */
   allowFullscreen?: boolean;
+  /** Show only a preview card that opens fullscreen when clicked */
+  previewOnly?: boolean;
+  /** Title for preview card */
+  title?: string;
 }
 
 const MiniSim: React.FC<MiniSimProps> = ({
@@ -53,6 +57,8 @@ const MiniSim: React.FC<MiniSimProps> = ({
   initialSpeed = 10,
   gameMode = false,
   allowFullscreen = false,
+  previewOnly = false,
+  title,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -153,9 +159,32 @@ const MiniSim: React.FC<MiniSimProps> = ({
     </div>
   );
 
+  // Preview card for previewOnly mode
+  const PreviewCard = () => (
+    <button
+      onClick={() => setIsFullscreen(true)}
+      className="w-full bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-gray-500 hover:bg-gray-800/50 transition-all group text-left"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          {title && (
+            <h4 className="text-lg font-semibold text-gray-100 mb-1">{title}</h4>
+          )}
+          <p className="text-sm text-gray-400">
+            {program.length} fraction{program.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400 group-hover:text-white transition-colors">
+          <span className="text-sm">Open simulator</span>
+          <Play size={18} />
+        </div>
+      </div>
+    </button>
+  );
+
   return (
     <>
-      <SimContent />
+      {previewOnly ? <PreviewCard /> : <SimContent />}
       {isFullscreen && createPortal(
         <div
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
