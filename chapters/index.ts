@@ -5,6 +5,7 @@ import Chapter3PrimeFactors from './Chapter3PrimeFactors';
 import Chapter4Visualization from './Chapter4Visualization';
 import Chapter5Puzzles from './Chapter5Puzzles';
 import Chapter6Computation from './Chapter6Computation';
+import Chapter7Fork from './Chapter7Fork';
 
 export const CHAPTERS: ChapterMeta[] = [
   {
@@ -48,5 +49,12 @@ export const CHAPTERS: ChapterMeta[] = [
     title: 'It Computes',
     subtitle: 'What you just built',
     component: Chapter6Computation,
+  },
+  {
+    id: 'fork',
+    number: 7,
+    title: 'Choose Your Path',
+    subtitle: 'Where to go from here',
+    component: Chapter7Fork,
   },
 ];

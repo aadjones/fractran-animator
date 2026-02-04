@@ -3,6 +3,8 @@ import { useHash } from './hooks/useHash';
 import { CHAPTERS } from './chapters/index';
 import Landing from './pages/Landing';
 import Sandbox from './pages/Sandbox';
+import AdvancedPuzzles from './pages/AdvancedPuzzles';
+import Explorer from './pages/Explorer';
 import ChapterLayout from './components/ChapterLayout';
 
 function App() {
@@ -16,6 +18,16 @@ function App() {
   // Sandbox (full simulator)
   if (route === '/sandbox') {
     return <Sandbox onNavigate={navigate} />;
+  }
+
+  // Advanced puzzles (fork path A)
+  if (route === '/puzzles-advanced') {
+    return <AdvancedPuzzles onNavigate={navigate} />;
+  }
+
+  // Explorer (fork path B)
+  if (route === '/explorer') {
+    return <Explorer onNavigate={navigate} />;
   }
 
   // Chapter routes
