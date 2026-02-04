@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { Fraction, ProgramState, PrimeMap, SimulationEvent, EventType, AnimationPhase } from '../types';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Fraction, ProgramState, PrimeMap, EventType } from '../types';
 import { parseProgram, stepSimulation, canApplyRule, applyRule, calculateValue } from '../services/fractranLogic';
-import { PRIMES, MAX_HISTORY_DEFAULT, INSTANT_SPEED_THRESHOLD, FORECAST_LIMIT } from '../constants';
+import { PRIMES, FORECAST_LIMIT } from '../constants';
+import { useSimulationHistory } from './useSimulationHistory';
+import { useAnimationController } from './useAnimationController';
+import { useEventDetector } from './useEventDetector';
 
 // Dry run to find halt step
 const calculateMaxSteps = (regs: PrimeMap, program: Fraction[]): number | null => {
@@ -32,68 +35,92 @@ export interface FractranSimOptions {
   initialSpeed?: number;
 }
 
+/**
+ * Main simulation hook - composes history, animation, and event detection.
+ * This is the public API used by widgets.
+ */
 export function useFractranSim(initialOptions: FractranSimOptions) {
-  const maxHistory = initialOptions.maxHistory ?? MAX_HISTORY_DEFAULT;
-
-  // Program Data
-  const [fractions, setFractions] = useState<Fraction[]>(() => parseProgram(initialOptions.program));
-  const [editableRegisters, setEditableRegisters] = useState<number[]>(initialOptions.editableRegisters ?? []);
+  // Program data
+  const [fractions, setFractions] = useState<Fraction[]>(() =>
+    parseProgram(initialOptions.program)
+  );
+  const [editableRegisters, setEditableRegisters] = useState<number[]>(
+    initialOptions.editableRegisters ?? []
+  );
   const [totalSteps, setTotalSteps] = useState<number | null>(() => {
     const parsed = parseProgram(initialOptions.program);
     return calculateMaxSteps(initialOptions.initialRegisters, parsed);
   });
 
-  // Simulation History & Current Pointer
-  const [history, setHistory] = useState<ProgramState[]>(() => [{
+  // Create initial state for history
+  const initialState: ProgramState = useMemo(() => ({
     registers: { ...initialOptions.initialRegisters },
     step: 0,
     lastRuleIndex: null,
     halted: false,
-  }]);
-  const [historyIndex, setHistoryIndex] = useState<number>(0);
+  }), []); // Only compute once on mount
 
-  // Playback Control
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(initialOptions.initialSpeed ?? 10);
+  // Compose sub-hooks
+  const historyHook = useSimulationHistory({
+    initialState,
+    maxHistory: initialOptions.maxHistory,
+  });
 
-  // Animation State
-  const [phase, setPhase] = useState<AnimationPhase>('idle');
-  const [activeRuleIndex, setActiveRuleIndex] = useState<number | null>(null);
-  const [scanningIndex, setScanningIndex] = useState<number | null>(null);
-  const [targetRuleIndex, setTargetRuleIndex] = useState<number | null>(null);
+  const eventsHook = useEventDetector({
+    enabledEvents: initialOptions.enabledEvents,
+  });
 
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Events
-  const [events, setEvents] = useState<SimulationEvent[]>([{
-    step: 0,
-    type: EventType.INFO,
-    message: "Loaded."
-  }]);
-  const [enabledEventTypes, setEnabledEventTypes] = useState<EventType[]>(
-    initialOptions.enabledEvents ?? [EventType.HALT]
+  // Callbacks for animation controller
+  const handleStep = useCallback(
+    (nextState: ProgramState) => {
+      const prevState = historyHook.currentState;
+      historyHook.pushState(nextState);
+      eventsHook.checkEvents(prevState, nextState);
+    },
+    [historyHook, eventsHook]
   );
 
-  // Derived state
-  const currentState = history[historyIndex] || {
-    registers: {},
-    step: 0,
-    lastRuleIndex: null,
-    halted: false
-  };
+  const handleHalt = useCallback(
+    (haltedState: ProgramState) => {
+      const prevState = historyHook.currentState;
+      historyHook.pushState(haltedState);
+      eventsHook.checkEvents(prevState, haltedState);
+    },
+    [historyHook, eventsHook]
+  );
 
+  const animationHook = useAnimationController({
+    onStep: handleStep,
+    onHalt: handleHalt,
+    initialSpeed: initialOptions.initialSpeed,
+  });
+
+  // Run animation loop
+  useEffect(() => {
+    if (animationHook.isPlaying && !historyHook.currentState.halted) {
+      animationHook.tick(historyHook.currentState, fractions);
+    }
+  }, [
+    animationHook.isPlaying,
+    animationHook.phase,
+    animationHook.scanningIndex,
+    historyHook.currentState,
+    fractions,
+    animationHook,
+  ]);
+
+  // Derived values
   const nValue = useMemo(() => {
-    return calculateValue(currentState.registers).toString();
-  }, [currentState.registers]);
+    return calculateValue(historyHook.currentState.registers).toString();
+  }, [historyHook.currentState.registers]);
 
-  // Identify all primes relevant to this program
   const usedPrimes = useMemo(() => {
     const set = new Set<number>();
     fractions.forEach(f => {
       Object.keys(f.numPrimes).forEach(p => set.add(Number(p)));
       Object.keys(f.denPrimes).forEach(p => set.add(Number(p)));
     });
-    Object.keys(currentState.registers).forEach(p => set.add(Number(p)));
+    Object.keys(historyHook.currentState.registers).forEach(p => set.add(Number(p)));
     editableRegisters.forEach(p => set.add(p));
 
     if (set.size === 0) return [];
@@ -106,280 +133,116 @@ export function useFractranSim(initialOptions: FractranSimOptions) {
     });
 
     return contiguous.sort((a, b) => a - b);
-  }, [fractions, currentState.registers, editableRegisters]);
+  }, [fractions, historyHook.currentState.registers, editableRegisters]);
 
-  const activeFraction = phase === 'scanning' && scanningIndex !== null
-    ? fractions[scanningIndex]
-    : (activeRuleIndex !== null ? fractions[activeRuleIndex] : null);
-
-  // --- Internal helpers ---
-
-  const stopSimulation = useCallback(() => {
-    setIsPlaying(false);
-    setPhase('idle');
-    setActiveRuleIndex(null);
-    setScanningIndex(null);
-    setTargetRuleIndex(null);
-    if (timerRef.current) clearTimeout(timerRef.current);
-  }, []);
-
-  const checkEvents = useCallback((prevState: ProgramState, newState: ProgramState) => {
-    const newEvents: SimulationEvent[] = [];
-
-    if (!prevState.halted && newState.halted && enabledEventTypes.includes(EventType.HALT)) {
-      newEvents.push({
-        step: newState.step,
-        type: EventType.HALT,
-        message: 'Program Halted'
-      });
-    }
-
-    if (enabledEventTypes.includes(EventType.POWER_OF_TWO)) {
-      const primes = Object.keys(newState.registers).map(Number);
-      if (primes.length === 1 && primes[0] === 2) {
-        const exponent = newState.registers[2];
-        if (exponent > 1) {
-          newEvents.push({
-            step: newState.step,
-            type: EventType.POWER_OF_TWO,
-            message: `2^${exponent} (Prime found: ${exponent})`,
-            data: exponent
-          });
-        }
-      }
-    }
-
-    if (enabledEventTypes.includes(EventType.FIBONACCI_PAIR)) {
-      const primes = Object.keys(newState.registers).map(Number);
-      const hasHighPrimes = primes.some(p => p >= 5 && (newState.registers[p] || 0) > 0);
-
-      if (!hasHighPrimes) {
-        const a = newState.registers[2] || 0;
-        const b = newState.registers[3] || 0;
-        if (a > 0 || b > 0) {
-          newEvents.push({
-            step: newState.step,
-            type: EventType.FIBONACCI_PAIR,
-            message: `Sequence: (${a}, ${b})`,
-            data: { a, b }
-          });
-        }
-      }
-    }
-
-    if (newEvents.length > 0) {
-      setEvents(prev => [...prev, ...newEvents]);
-    }
-  }, [enabledEventTypes]);
-
-  const commitStep = useCallback((nextState: ProgramState) => {
-    setHistory(prev => {
-      const newHistory = prev.slice(0, historyIndex + 1);
-      newHistory.push(nextState);
-      if (newHistory.length > maxHistory) {
-        newHistory.shift();
-      }
-      return newHistory;
-    });
-
-    setHistoryIndex(prev => {
-      return (history.length >= maxHistory && historyIndex >= maxHistory - 1)
-        ? maxHistory - 1
-        : historyIndex + 1;
-    });
-
-    checkEvents(currentState, nextState);
-  }, [history, historyIndex, currentState, checkEvents, maxHistory]);
-
-  // --- Animation Loop ---
-
-  useEffect(() => {
-    if (!isPlaying || currentState.halted) {
-      if (currentState.halted) setIsPlaying(false);
-      return;
-    }
-
-    const isInstant = speed > INSTANT_SPEED_THRESHOLD;
-
-    if (phase === 'idle') {
-      const stepDelay = isInstant ? Math.max(10, 200 - speed * 2) : 50;
-
-      timerRef.current = setTimeout(() => {
-        let foundIndex = -1;
-        for (let i = 0; i < fractions.length; i++) {
-          if (canApplyRule(currentState.registers, fractions[i])) {
-            foundIndex = i;
-            break;
-          }
-        }
-
-        if (isInstant) {
-          if (foundIndex === -1) {
-            const nextState = { ...currentState, halted: true, lastRuleIndex: null };
-            commitStep(nextState);
-            setIsPlaying(false);
-          } else {
-            const nextState = stepSimulation(currentState, fractions);
-            commitStep(nextState);
-          }
-        } else {
-          setTargetRuleIndex(foundIndex);
-          setScanningIndex(0);
-          setPhase('scanning');
-        }
-      }, stepDelay);
-    }
-    else if (phase === 'scanning') {
-      const scanDelay = Math.max(20, 150 - speed);
-      timerRef.current = setTimeout(() => {
-        if (scanningIndex === targetRuleIndex) {
-          setActiveRuleIndex(targetRuleIndex);
-          setScanningIndex(null);
-          setPhase('selecting');
-        }
-        else if (scanningIndex !== null && scanningIndex >= fractions.length - 1) {
-          const nextState = { ...currentState, halted: true, lastRuleIndex: null };
-          commitStep(nextState);
-          stopSimulation();
-        }
-        else {
-          setScanningIndex((prev) => (prev !== null ? prev + 1 : 0));
-        }
-      }, scanDelay);
-    }
-    else if (phase === 'selecting') {
-      const delay = Math.max(50, 400 - speed * 3);
-      timerRef.current = setTimeout(() => { setPhase('consuming'); }, delay);
-    }
-    else if (phase === 'consuming') {
-      const delay = Math.max(50, 500 - speed * 4);
-      timerRef.current = setTimeout(() => { setPhase('producing'); }, delay);
-    }
-    else if (phase === 'producing') {
-      const delay = Math.max(50, 500 - speed * 4);
-      timerRef.current = setTimeout(() => {
-        const nextState = stepSimulation(currentState, fractions);
-        commitStep(nextState);
-        setPhase('idle');
-        setActiveRuleIndex(null);
-        setScanningIndex(null);
-      }, delay);
-    }
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [isPlaying, phase, currentState, fractions, speed, commitStep, scanningIndex, targetRuleIndex, stopSimulation]);
-
-  useEffect(() => {
-    if (history.length > 0 && historyIndex > history.length - 1) {
-      setHistoryIndex(history.length - 1);
-    }
-  }, [history.length, historyIndex]);
+  const activeFraction =
+    animationHook.phase === 'scanning' && animationHook.scanningIndex !== null
+      ? fractions[animationHook.scanningIndex]
+      : animationHook.activeRuleIndex !== null
+        ? fractions[animationHook.activeRuleIndex]
+        : null;
 
   // --- Public actions ---
 
   const step = useCallback(() => {
-    if (currentState.halted) return;
-    const nextState = stepSimulation(currentState, fractions);
-    commitStep(nextState);
-  }, [currentState, fractions, commitStep]);
+    if (historyHook.currentState.halted) return;
+    const nextState = stepSimulation(historyHook.currentState, fractions);
+    handleStep(nextState);
+  }, [historyHook.currentState, fractions, handleStep]);
 
   const reset = useCallback(() => {
-    stopSimulation();
-    if (history.length > 0) {
-      setHistory([history[0]]);
-      setHistoryIndex(0);
-      setEvents([{
-        step: 0,
-        type: EventType.INFO,
-        message: "Reset."
-      }]);
-    }
-  }, [history, stopSimulation]);
+    animationHook.stop();
+    historyHook.resetToInitial();
+    eventsHook.reset('Reset.');
+  }, [animationHook, historyHook, eventsHook]);
 
-  const scrub = useCallback((idx: number) => {
-    stopSimulation();
-    setHistoryIndex(idx);
-  }, [stopSimulation]);
+  const scrub = useCallback(
+    (idx: number) => {
+      animationHook.stop();
+      historyHook.scrubTo(idx);
+    },
+    [animationHook, historyHook]
+  );
 
-  const editRegister = useCallback((prime: number, delta: number) => {
-    if (currentState.step !== 0) return;
-    if (!editableRegisters.includes(prime)) return;
+  const editRegister = useCallback(
+    (prime: number, delta: number) => {
+      if (historyHook.currentState.step !== 0) return;
+      if (!editableRegisters.includes(prime)) return;
 
-    setHistory(prev => {
-      const root = { ...prev[0] };
-      const newRegs = { ...root.registers };
+      const currentRegs = historyHook.currentState.registers;
+      const newRegs = { ...currentRegs };
       const currentCount = newRegs[prime] || 0;
       const newCount = Math.max(0, currentCount + delta);
 
       if (newCount === 0) delete newRegs[prime];
       else newRegs[prime] = newCount;
 
-      root.registers = newRegs;
+      const newState: ProgramState = {
+        registers: newRegs,
+        step: 0,
+        lastRuleIndex: null,
+        halted: false,
+      };
 
-      const max = calculateMaxSteps(newRegs, fractions);
-      setTotalSteps(max);
+      historyHook.replaceInitialState(newState);
+      setTotalSteps(calculateMaxSteps(newRegs, fractions));
+    },
+    [historyHook, editableRegisters, fractions]
+  );
 
-      return [root];
-    });
-  }, [currentState.step, editableRegisters, fractions]);
+  const load = useCallback(
+    (
+      program: string[],
+      registers: PrimeMap,
+      opts?: {
+        editableRegisters?: number[];
+        enabledEvents?: EventType[];
+      }
+    ) => {
+      animationHook.stop();
 
-  const load = useCallback((
-    program: string[],
-    registers: PrimeMap,
-    opts?: {
-      editableRegisters?: number[];
-      enabledEvents?: EventType[];
-    }
-  ) => {
-    stopSimulation();
-    const parsed = parseProgram(program);
-    setFractions(parsed);
-    setEditableRegisters(opts?.editableRegisters ?? []);
+      const parsed = parseProgram(program);
+      setFractions(parsed);
+      setEditableRegisters(opts?.editableRegisters ?? []);
+      setTotalSteps(calculateMaxSteps(registers, parsed));
 
-    const max = calculateMaxSteps(registers, parsed);
-    setTotalSteps(max);
+      const newInitialState: ProgramState = {
+        registers: { ...registers },
+        step: 0,
+        lastRuleIndex: null,
+        halted: false,
+      };
 
-    const initialState: ProgramState = {
-      registers: { ...registers },
-      step: 0,
-      lastRuleIndex: null,
-      halted: false
-    };
+      historyHook.replaceInitialState(newInitialState);
+      eventsHook.reset('Loaded.');
+      eventsHook.setEnabledEvents(opts?.enabledEvents ?? [EventType.HALT]);
+    },
+    [animationHook, historyHook, eventsHook]
+  );
 
-    setHistory([initialState]);
-    setHistoryIndex(0);
-    setEvents([{
-      step: 0,
-      type: EventType.INFO,
-      message: "Loaded."
-    }]);
-    setEnabledEventTypes(opts?.enabledEvents ?? [EventType.HALT]);
-  }, [stopSimulation]);
-
+  // Return same API shape as before for compatibility
   return {
     // State
-    currentState,
+    currentState: historyHook.currentState,
     fractions,
     nValue,
     usedPrimes,
-    history,
-    historyIndex,
-    events,
+    history: historyHook.history,
+    historyIndex: historyHook.historyIndex,
+    events: eventsHook.events,
     totalSteps,
     editableRegisters,
 
     // Playback
-    isPlaying,
-    speed,
-    setSpeed,
-    setIsPlaying,
+    isPlaying: animationHook.isPlaying,
+    speed: animationHook.speed,
+    setSpeed: animationHook.setSpeed,
+    setIsPlaying: animationHook.setIsPlaying,
 
     // Animation
-    phase,
-    activeRuleIndex,
-    scanningIndex,
+    phase: animationHook.phase,
+    activeRuleIndex: animationHook.activeRuleIndex,
+    scanningIndex: animationHook.scanningIndex,
     activeFraction,
 
     // Actions
@@ -388,6 +251,6 @@ export function useFractranSim(initialOptions: FractranSimOptions) {
     scrub,
     editRegister,
     load,
-    stopSimulation,
+    stopSimulation: animationHook.stop,
   };
 }
