@@ -35,7 +35,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
             More Puzzles
           </h1>
           <p className="text-gray-400 text-lg mt-2">
-            Subtraction, comparison, and the classic swap problem
+            Subtraction, comparison, and pipelines
           </p>
         </div>
       </div>
@@ -86,23 +86,23 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
 
         <Spacer />
 
-        <H3>Puzzle: The swap</H3>
+        <H3>Puzzle: The pipeline</H3>
 
-        <P>Swap the values in columns 2 and 3.</P>
+        <P>Move all dots from column 2 through columns 3, 5, and finally to column 7.</P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
-            initialRegisters={{ 2: 4, 3: 2 }}
-            editableRegisters={[2, 3, 5]}
-            goalDescription="Swap columns 2 and 3"
+            initialRegisters={{ 2: 4 }}
+            editableRegisters={[2]}
+            goalDescription="Move dots: 2 → 3 → 5 → 7"
           />
         </WidgetContainer>
 
         <Spoiler label="See solution">
           <ol className="list-decimal list-inside space-y-1 font-mono">
-            <li>5/2</li>
-            <li>2/3</li>
-            <li>3/5</li>
+            <li>7/5</li>
+            <li>5/3</li>
+            <li>3/2</li>
           </ol>
         </Spoiler>
 

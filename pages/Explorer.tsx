@@ -66,6 +66,7 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
             editableRegisters={[2, 3]}
             showRules={true}
             description="Computes 2×3 register values → result in column 5"
+            allowFullscreen
           />
         </WidgetContainer>
 
@@ -101,6 +102,7 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
             showRules={true}
             enabledEvents={[EventType.FIBONACCI_PAIR]}
             description="Columns 2 & 3 cycle through Fibonacci pairs"
+            allowFullscreen
           />
         </WidgetContainer>
 
@@ -143,6 +145,7 @@ const Explorer: React.FC<ExplorerProps> = ({ onNavigate }) => {
             showRules={true}
             enabledEvents={[EventType.POWER_OF_TWO]}
             description="Watch for moments when only column 2 has dots"
+            allowFullscreen
           />
         </WidgetContainer>
 
