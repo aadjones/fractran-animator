@@ -212,78 +212,26 @@ export function useFractranSim(props: UseFractranSimProps) {
 
 ---
 
-## Phase 3: Consolidate Widget Patterns
+## Phase 3: Consolidate Widget Patterns — SKIPPED
 
-**Goal:** Reduce boilerplate when creating new widgets.
-**Estimated scope:** Medium refactor, new abstraction
+**Status:** Skipped after analysis (Feb 2026)
 
-### 3.1 Create `useWidgetBase` hook
+**Original goal:** Reduce boilerplate when creating new widgets.
 
-**Problem:** Every widget repeats the same initialization:
-- Parse fraction program with `useMemo`
-- Initialize registers
-- Create reset handler
-- Wire up `useFractranSim`
+**Why skipped:** After reviewing the actual widgets, the duplication was overstated:
 
-**Solution:** Extract common patterns:
+| Widget | Uses `useFractranSim`? | Notes |
+|--------|----------------------|-------|
+| MiniSim | Yes | Already clean - just passes props to hook |
+| ProgramBuilder | Yes | Has unique fraction editing state |
+| NumberGameWidget | No | Own simple animation, no registers |
+| ManualStepWidget | No | Interactive quiz with custom phases |
 
-```typescript
-// hooks/useWidgetBase.ts
-interface UseWidgetBaseProps {
-  program: string | string[];
-  initialRegisters?: PrimeMap;
-  editableRegisters?: number[];
-  autoPlay?: boolean;
-}
+Only 2 of 4 widgets use the hook, and they use it differently. A `useWidgetBase` abstraction would be forced/artificial.
 
-export function useWidgetBase(props: UseWidgetBaseProps) {
-  // Common initialization logic
-  const fractionProgram = useMemo(() => parseProgram(props.program), [props.program]);
-  const sim = useFractranSim({ ... });
+**What could still be extracted:** The fraction editing logic (`FractionInput` type, `buildProgram()`, `updateFraction()`) is duplicated between `ProgramBuilder.tsx` and `Sandbox.tsx`. A `useFractionEditor` hook could consolidate this (~40 lines), but it's marginal value.
 
-  return {
-    sim,
-    fractionProgram,
-    // common handlers
-  };
-}
-```
-
-**Action items:**
-- [ ] Identify common patterns across widgets
-- [ ] Create `hooks/useWidgetBase.ts`
-- [ ] Refactor widgets to use it
-- [ ] Document the pattern in ARCHITECTURE.md
-
----
-
-### 3.2 Standardize widget props interface
-
-**Problem:** Widgets have slightly different prop names:
-- `editableStart` vs `editableRegisters`
-- `initialN` vs `initialRegisters`
-- Some take `program: string`, others `program: string[]`
-
-**Solution:** Define canonical interfaces:
-
-```typescript
-// types.ts
-interface BaseWidgetProps {
-  /** Program as string ("3/2, 1/3") or array (["3/2", "1/3"]) */
-  program: string | string[];
-  /** Initial register values */
-  initialRegisters?: PrimeMap;
-  /** Which registers can be edited (prime bases) */
-  editableRegisters?: number[];
-  /** Start playing automatically */
-  autoPlay?: boolean;
-}
-```
-
-**Action items:**
-- [ ] Add `BaseWidgetProps` to `types.ts`
-- [ ] Update widgets to extend/use this interface
-- [ ] Migrate inconsistent prop names
+**Recommendation for future work:** If you add more widgets that use `useFractranSim` with similar patterns, revisit this. For now, the current structure is fine.
 
 ---
 
@@ -357,26 +305,25 @@ Decide between the 5-phase animation (useFractranSim) and simple timer (NumberGa
 Recommended order based on dependencies and risk:
 
 ```
-Phase 1 (Quick Wins)
-  ├── 1.1 Extract formatPrimeFactors ←── START HERE
+Phase 1 (Quick Wins) ✅ DONE
+  ├── 1.1 Extract formatPrimeFactors
   ├── 1.2 Remove numberToRegisters
   └── 1.3 Move constants
 
-Phase 2 (Split Hook) ←── Biggest impact
+Phase 2 (Split Hook) ✅ DONE
   ├── 2.1 Extract useSimulationHistory
   ├── 2.2 Extract useAnimationController
   ├── 2.3 Extract useEventDetector
   └── 2.4 Slim down useFractranSim
 
-Phase 3 (Widget Patterns)
-  ├── 3.1 Create useWidgetBase
-  └── 3.2 Standardize props
+Phase 3 (Widget Patterns) ⏭️ SKIPPED
+  └── See notes above - widgets are too different to share a base
 
-Phase 4 (Types)
+Phase 4 (Types) — Optional
   ├── 4.1 Typed fraction input
   └── 4.2 Consolidate edit mode
 
-Phase 5 (Polish) ←── As needed
+Phase 5 (Polish) — As needed
   └── ...
 ```
 
@@ -384,12 +331,12 @@ Phase 5 (Polish) ←── As needed
 
 ## Success Criteria
 
-After completing Phases 1-3:
-- [x] No function is duplicated across files (Phase 1 ✅)
-- [~] `useFractranSim.ts` is under 150 lines (now 215 lines - acceptable, maintains API)
-- [ ] Adding a new widget requires < 50 lines of boilerplate
-- [ ] Event detection is pluggable (can add custom detectors)
-- [ ] All constants are in `constants.ts`
+After completing Phases 1-2:
+- [x] No function is duplicated across files (Phase 1)
+- [x] `useFractranSim.ts` is manageable (215 lines, was 397)
+- [x] Event detection is pluggable (useEventDetector with detector functions)
+- [x] All constants are in `constants.ts`
+- [x] Each hook has single responsibility (history, animation, events)
 
 ---
 
