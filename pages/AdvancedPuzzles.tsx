@@ -75,7 +75,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
         </WidgetContainer>
 
         <Spoiler label="See solution">
-          <strong>5/6</strong>
+          <strong>5/6, 1/2, 1/3</strong>
         </Spoiler>
 
         <Spacer />
