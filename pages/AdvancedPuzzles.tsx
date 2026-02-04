@@ -35,7 +35,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
             More Puzzles
           </h1>
           <p className="text-gray-400 text-lg mt-2">
-            Subtraction, comparison, and pipelines
+            Subtraction and comparison
           </p>
         </div>
       </div>
@@ -44,9 +44,7 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
       <main className="max-w-2xl mx-auto px-6 py-8 md:py-12">
         <H3>Puzzle: Subtraction</H3>
 
-        <P>
-          Compute b − a. The answer should end up in column 3.
-        </P>
+        <P>Compute b − a. The answer should end up in column 3.</P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
@@ -66,13 +64,16 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
 
         <H3>Puzzle: Find the minimum</H3>
 
-        <P>Write a program that computes min(4, 7). The answer should end up in column 5.</P>
+        <P>
+          Write a program that computes min(a, b). The answer should end up in
+          column 5.
+        </P>
 
         <WidgetContainer label="Build it">
           <ProgramBuilder
             initialRegisters={{ 2: 4, 3: 7 }}
             editableRegisters={[2, 3, 5]}
-            goalDescription="Compute min(4, 7) in column 5"
+            goalDescription="Compute min(a, b) in column 5"
           />
         </WidgetContainer>
 
@@ -81,28 +82,6 @@ const AdvancedPuzzles: React.FC<AdvancedPuzzlesProps> = ({ onNavigate }) => {
             <li>5/6</li>
             <li>1/2</li>
             <li>1/3</li>
-          </ol>
-        </Spoiler>
-
-        <Spacer />
-
-        <H3>Puzzle: The pipeline</H3>
-
-        <P>Move all dots from column 2 through columns 3, 5, and finally to column 7.</P>
-
-        <WidgetContainer label="Build it">
-          <ProgramBuilder
-            initialRegisters={{ 2: 4 }}
-            editableRegisters={[2]}
-            goalDescription="Move dots: 2 → 3 → 5 → 7"
-          />
-        </WidgetContainer>
-
-        <Spoiler label="See solution">
-          <ol className="list-decimal list-inside space-y-1 font-mono">
-            <li>7/5</li>
-            <li>5/3</li>
-            <li>3/2</li>
           </ol>
         </Spoiler>
 
