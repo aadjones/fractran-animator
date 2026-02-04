@@ -28,8 +28,8 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
   
   // Dynamic Sizing based on register count
   const count = usedPrimes.length;
-  const isHighDensity = count > 10; // Prime Game typically
-  const isCompact = count > 6 && !isHighDensity;
+  const isHighDensity = count > 8; // Prime Game typically
+  const isCompact = count >= 5 && !isHighDensity; // Fibonacci, multiplication
 
   // Sizing variables
   const containerWidth = isHighDensity 
