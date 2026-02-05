@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { parseProgram } from '../../services/fractranLogic';
+import { useSound } from '../../hooks/useSound';
 
 interface ManualStepWidgetProps {
   fractions: string[];
@@ -26,6 +27,7 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
   const [history, setHistory] = useState<number[]>([startingNumber]);
   const [phase, setPhase] = useState<Phase>({ type: 'checking', ruleIndex: 0 });
   const [inputValue, setInputValue] = useState('');
+  const { playHalt } = useSound();
 
   // Check if rule applies (result is whole number)
   const ruleApplies = (ruleIndex: number): boolean => {
@@ -117,9 +119,51 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
     } else {
       // No rules apply - halt!
       setPhase({ type: 'halted' });
+      playHalt();
       onComplete?.();
     }
   };
+
+  // Keyboard shortcuts for faster interaction
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't capture if user is typing in an input
+      if (e.target instanceof HTMLInputElement) return;
+
+      if (phase.type === 'checking') {
+        if (e.key === 'y' || e.key === 'Y') {
+          e.preventDefault();
+          handleYesNo(true);
+        } else if (e.key === 'n' || e.key === 'N') {
+          e.preventDefault();
+          handleYesNo(false);
+        }
+      } else if (phase.type === 'wrong_answer') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleTryAgain();
+        }
+      } else if (phase.type === 'correct_no') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleNextRule();
+        }
+      } else if (phase.type === 'step_complete') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleContinue();
+        }
+      } else if (phase.type === 'wrong_calculation') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleTryAgain();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [phase]);
 
   const currentFraction = (phase.type !== 'halted' && phase.type !== 'step_complete' && 'ruleIndex' in phase)
     ? fractions[phase.ruleIndex]
@@ -266,7 +310,7 @@ const ManualStepWidget: React.FC<ManualStepWidgetProps> = ({
                 type="number"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                className="w-20 md:w-24 bg-gray-800 border border-gray-600 rounded px-2 md:px-3 py-1.5 md:py-2 font-mono text-base md:text-lg text-white text-center focus:border-blue-500 outline-none"
+                className="w-20 md:w-24 bg-gray-800 border border-gray-600 rounded px-2 md:px-3 py-1.5 md:py-2 font-mono text-base md:text-lg text-white text-center focus:border-blue-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 autoFocus
               />
               <button

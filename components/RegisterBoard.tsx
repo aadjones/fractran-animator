@@ -241,10 +241,23 @@ const RegisterBoard: React.FC<RegisterBoardProps> = ({
                   </div>
 
                   {/* Register Box */}
-                  <div 
-                      className={`w-full flex-1 border ${borderColor} ${bgColor} ${shadowClass} rounded-lg relative flex flex-col-reverse flex-wrap content-center py-2 gap-0.5 transition-all duration-300 overflow-hidden ${isEditable ? 'cursor-pointer hover:border-green-500/40 hover:bg-green-900/5' : ''}`}
-                      title={`${totalBeads} beads`}
+                  <div
+                      className={`w-full flex-1 border ${borderColor} ${bgColor} ${shadowClass} rounded-lg relative flex flex-col-reverse flex-wrap content-center py-2 gap-0.5 transition-all duration-300 overflow-hidden ${isEditable ? 'cursor-pointer hover:border-green-500/40 hover:bg-green-900/5 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/40' : ''}`}
+                      title={`${totalBeads} beads${isEditable ? ' (Enter to add, Backspace to remove)' : ''}`}
+                      tabIndex={isEditable ? 0 : undefined}
+                      role={isEditable ? 'button' : undefined}
+                      aria-label={isEditable ? `Prime ${prime}: ${totalBeads} beads. Press Enter to add, Backspace to remove.` : undefined}
                       onClick={() => isEditable && onEdit(prime, 1)}
+                      onKeyDown={(e) => {
+                          if (!isEditable) return;
+                          if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onEdit(prime, 1);
+                          } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                              e.preventDefault();
+                              onEdit(prime, -1);
+                          }
+                      }}
                       onContextMenu={(e) => {
                           if (isEditable) {
                               e.preventDefault();
