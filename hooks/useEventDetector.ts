@@ -70,6 +70,8 @@ const DETECTOR_MAP: Record<EventType, EventDetector> = {
 export interface UseEventDetectorOptions {
   enabledEvents?: EventType[];
   initialMessage?: string;
+  /** Called when events are detected - useful for playing sounds, etc. */
+  onEvent?: (event: SimulationEvent) => void;
 }
 
 export interface UseEventDetectorReturn {
@@ -91,7 +93,7 @@ export interface UseEventDetectorReturn {
 export function useEventDetector(
   options: UseEventDetectorOptions = {}
 ): UseEventDetectorReturn {
-  const { enabledEvents = [EventType.HALT], initialMessage = 'Loaded.' } = options;
+  const { enabledEvents = [EventType.HALT], initialMessage = 'Loaded.', onEvent } = options;
 
   const [events, setEvents] = useState<SimulationEvent[]>([
     { step: 0, type: EventType.INFO, message: initialMessage },
@@ -108,6 +110,7 @@ export function useEventDetector(
           const event = detector(prevState, nextState);
           if (event) {
             newEvents.push(event);
+            onEvent?.(event);
           }
         }
       }
@@ -116,7 +119,7 @@ export function useEventDetector(
         setEvents(prev => [...prev, ...newEvents]);
       }
     },
-    [enabledEventTypes]
+    [enabledEventTypes, onEvent]
   );
 
   const reset = useCallback((message = 'Reset.') => {

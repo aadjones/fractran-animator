@@ -3,6 +3,7 @@ import { PrimeMap } from '../../types';
 import { parseProgram, canApplyRule, applyRule, calculateValue, getPrimeFactors } from '../../services/fractranLogic';
 import { formatPrimeFactors } from '../../services/formatters';
 import { Play, Pause, ArrowRight, RotateCcw } from 'lucide-react';
+import { useSound } from '../../hooks/useSound';
 
 interface NumberGameWidgetProps {
   program: string[];
@@ -26,6 +27,7 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
   showPrimeFactors = false,
 }) => {
   const fractions = React.useMemo(() => parseProgram(program), [program]);
+  const { playHalt } = useSound();
 
   const [startN, setStartN] = useState(initialN);
   const [inputValue, setInputValue] = useState(String(initialN));
@@ -55,7 +57,8 @@ const NumberGameWidget: React.FC<NumberGameWidgetProps> = ({
     // No rule applied — halted
     setHalted(true);
     setIsPlaying(false);
-  }, [currentRegisters, fractions, halted]);
+    playHalt();
+  }, [currentRegisters, fractions, halted, playHalt]);
 
   // Auto-play
   useEffect(() => {

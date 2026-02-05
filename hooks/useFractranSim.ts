@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Fraction, ProgramState, PrimeMap, EventType } from '../types';
+import { Fraction, ProgramState, PrimeMap, EventType, SimulationEvent } from '../types';
 import { parseProgram, stepSimulation, canApplyRule, applyRule, calculateValue } from '../services/fractranLogic';
 import { PRIMES, FORECAST_LIMIT } from '../constants';
 import { useSimulationHistory } from './useSimulationHistory';
 import { useAnimationController } from './useAnimationController';
 import { useEventDetector } from './useEventDetector';
+import { useSound } from './useSound';
 
 // Dry run to find halt step
 const calculateMaxSteps = (regs: PrimeMap, program: Fraction[]): number | null => {
@@ -66,8 +67,19 @@ export function useFractranSim(initialOptions: FractranSimOptions) {
     maxHistory: initialOptions.maxHistory,
   });
 
+  const { playDing, playHalt } = useSound();
+
+  const handleEvent = useCallback((event: SimulationEvent) => {
+    if (event.type === EventType.HALT) {
+      playHalt();
+    } else if (event.type === EventType.POWER_OF_TWO) {
+      playDing();
+    }
+  }, [playDing, playHalt]);
+
   const eventsHook = useEventDetector({
     enabledEvents: initialOptions.enabledEvents,
+    onEvent: handleEvent,
   });
 
   // Callbacks for animation controller
